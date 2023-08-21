@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Register = ({setPage}) => {
+const Register = ({setPage, setIdentifier}) => {
   const [registerStage, setRegisterStage] = useState('1');
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -38,6 +38,8 @@ const Register = ({setPage}) => {
     console.log("Register!");
     // Send register data to server
     // fetch('http://localhost:3001/register', {
+    setIdentifier(email);
+    setPage("verifyRegistration");
   };
 
   return (
@@ -56,12 +58,13 @@ const Register = ({setPage}) => {
           </div>
         </div>
         <div className="right-column">
-        {registerStage === "1" && (<button className="back" onClick={() => setRegisterStage("1")}>&larr;&emsp;Temporary</button>)}
+        {registerStage === "1" && (<button className="back" id="invisible-back">&larr;&emsp;Invisible back to keep alignment</button>)}
         {registerStage === "2" && (<button className="back" onClick={() => setRegisterStage("1")}>&larr;&emsp;Back</button>)}
         {registerStage === "3" && (<button className="back" onClick={() => setRegisterStage("2")}>&larr;&emsp;Back</button>)}
           <h1 className="formHeading">Register</h1>
+          <br/><br/>
           {registerStage === "1" && (<form className="form" onSubmit={handleNavToStage2}>
-            <label>Email</label><br/>
+            <label>Email Address</label><br/>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required/><br/>
             <br/>
             <button className="standard" type="submit">Next</button><br/>
@@ -75,7 +78,7 @@ const Register = ({setPage}) => {
             <label>Password</label> <br></br>
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}  placeholder="Enter strong password here..." autoComplete="new-password" required /><br/>
             <br/>
-            <button className="standard" type="submit">Next</button><br/>
+            <button className="standard" type="submit">Next</button>
           </form>)}
           {registerStage === "3" && (<form className="form" onSubmit={handleSubmit}>
             <label className="form__label-centred">Search and select movies you have seen</label><br/>

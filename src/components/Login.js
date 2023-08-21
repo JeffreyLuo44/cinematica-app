@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
-const Login = ({setPage}) => {
-  const [identifier, setIdentifier] = useState('');
+const Login = ({setPage, identifier, setIdentifier}) => {
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
@@ -9,6 +8,7 @@ const Login = ({setPage}) => {
     console.log("Login!");
     // Send login data to server
     // fetch('http://localhost:3001/login', {
+    setPage("timeline");
   };
 
   return (
@@ -27,12 +27,13 @@ const Login = ({setPage}) => {
           </div>
         </div>
         <div className="right-column">
+          <button className="back" id="invisible-back">&larr;&emsp;Invisible back to keep alignment</button>
           <h1 className="formHeading">Login</h1>
           <form className="form" onSubmit={handleSubmit}>
             <label>Username or Email Address</label><br/>
             <input type="text" value={identifier.trim()} onChange={(e) => setIdentifier(e.target.value)} required/><br/>
             <br/>
-            <label id="login-password">Password</label> <span className="link">Forgot Password</span><br/>
+            <label id="login-password">Password</label> <span className="link" onClick={() => setPage("passwordReset")}>Forgot Password</span><br/>
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}  placeholder="" autoComplete="new-password" required /> <br/>
             <br/>
             <button className="standard" type="submit">Log In</button>

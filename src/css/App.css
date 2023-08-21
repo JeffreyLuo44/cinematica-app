@@ -90,6 +90,14 @@ button.back {
   margin: 1.2rem;
 }
 
+#invisible-back {
+  color:#fff;
+}
+
+#resend-button {
+  background: var(--color-magenta);
+}
+
 input[type=text], input[type=password], input[type=email] {
   text-decoration: none;
   border: none;
@@ -97,6 +105,11 @@ input[type=text], input[type=password], input[type=email] {
   padding: 1rem;
   margin-top: 10px;
   background-color: var(--color-grey);
+}
+
+input.otpEntry {
+  width:0.6rem;
+  margin-right: 0.6rem;
 }
 
 p.link, label.link, span.link {
@@ -107,6 +120,10 @@ h1.formHeading {
   text-align: center;
   margin-top: 10%;
   margin-bottom: 10%;
+}
+
+#verifyHeading{
+  margin-bottom: none;
 }
 
 form {
