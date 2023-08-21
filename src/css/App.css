@@ -1,0 +1,141 @@
+.container {
+  display: flex;
+}
+
+.left-column {
+  width: 50%;
+}
+
+.right-column {
+  width: 50%;
+}
+
+/*
+ * Register and Login Page Styling
+ */
+.register__background, 
+.login__background {
+  display: flex;
+  align-items: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+}
+
+.register__background {
+  background-image: linear-gradient(to bottom, #4d4e9d81, #bf4d7581), url('./../../public/cinema-watching.png');
+}
+
+.login__background {
+  background-image: linear-gradient(to bottom, #4d4e9d81, #bf4d7581), url('./../../public/cinema.png');
+}
+
+.register__background-container, 
+.login__background-container {
+  padding: 4rem;
+}
+
+.register__background-container p:first-child, 
+.login__background-container p:first-child {
+  padding-bottom: 5rem;
+}
+
+.register__background-heading, 
+.register__background-text,
+.login__background-heading,
+.login__background-text {
+  color: var(--color-light-grey);
+}
+
+.register__background-heading,
+.login__background-heading {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.register__background-text,
+.login__background-text {
+  font-size: 1.7rem;
+}
+
+#login-password{
+  margin-right: 1rem;
+}
+
+/*
+ * Button styling
+ */
+button {
+  text-decoration: none;
+}
+
+button.standard, input[type=text], input[type=password], input[type=email] {
+  width: 25rem;
+}
+
+button.standard {
+  height: 3.5rem;
+  border-radius: 1.2rem;
+  background: var(--color-blue);
+  color: var(--color-light-grey);
+  margin-bottom: 10%;
+}
+
+button.back {
+  font-size: 1.2rem;
+  font-weight: normal;
+  border: none;
+  background: none;
+  color: var(--color-dark-grey);
+  margin: 1.2rem;
+}
+
+input[type=text], input[type=password], input[type=email] {
+  text-decoration: none;
+  border: none;
+  border-radius: 1.2rem;
+  padding: 1rem;
+  margin-top: 10px;
+  background-color: var(--color-grey);
+}
+
+p.link, label.link, span.link {
+  color: var(--color-blue);
+}
+
+h1.formHeading {
+  text-align: center;
+  margin-top: 10%;
+  margin-bottom: 10%;
+}
+
+form {
+  text-align: center;
+}
+
+label {
+  text-align: left;
+}
+
+label.form__label-centred {
+  text-align: center;
+}
+
+input.searchBar{
+  text-indent: 1.4rem;
+  background: var(--color-grey) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E") no-repeat 13px center;
+}
+
+.movie-container {
+  margin-left: 27%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.2rem;
+  border-radius: 1.2rem;
+  /* text-align: center; */
+  max-height: 44rem;
+  max-width: 22rem;
+  overflow-y: scroll;
+  background-color: var(--color-light-grey);
+}

@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Krona+One&family=Work+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap');
+
+:root {
+  --color-blue: #4d4f9d;
+  --color-magenta: #bf4d75;
+  --color-light-grey: #f7f7f7;
+  --color-grey: #d8d8d8;
+  --color-grey-2: #efefef;
+  --color-dark-grey: #2f2f2f; 
+}
+
+body {
+  margin: 0;
+}
+
+button, body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Work Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-dark-grey);
+}
+
+button {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.cinematica__logo {
+  font-family: 'Krona One', sans-serif;
+  text-transform: uppercase;
+}
+
+.cinematica__logo.logo__colour-1 {
+  color: var(--color-light-grey);
+}
+
+.cinematica__logo.logo__colour-2 {
+  background-color: linear-gradient(to bottom, var(--color-blue), var(--color-magenta));
+}
+
+.cinematica__logo.logo__size-1 {
+  font-size: 2.5rem;
+}
+
+.cinematica__logo.logo__size-2 {
+  font-size: 1.5rem;
+}
