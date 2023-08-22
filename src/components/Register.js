@@ -58,9 +58,9 @@ const Register = ({setPage, setIdentifier}) => {
           </div>
         </div>
         <div className="right-column">
-        {registerStage === "1" && (<button className="back" id="invisible-back">&larr;&emsp;Invisible back to keep alignment</button>)}
-        {registerStage === "2" && (<button className="back" onClick={() => setRegisterStage("1")}>&larr;&emsp;Back</button>)}
-        {registerStage === "3" && (<button className="back" onClick={() => setRegisterStage("2")}>&larr;&emsp;Back</button>)}
+        {registerStage === "1" && (<button className="back" id="invisible-back"><i class='fa fa-arrow-left'></i>&emsp;Invisible back to keep alignment</button>)}
+        {registerStage === "2" && (<button className="back" onClick={() => setRegisterStage("1")}><i class='fa fa-arrow-left'></i>&emsp;Back</button>)}
+        {registerStage === "3" && (<button className="back" onClick={() => setRegisterStage("2")}><i class='fa fa-arrow-left'></i>&emsp;Back</button>)}
           <h1 className="formHeading">Register</h1>
           <br/><br/>
           {registerStage === "1" && (<form className="form" onSubmit={handleNavToStage2}>

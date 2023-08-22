@@ -63,7 +63,7 @@ const VerifyRegistration = ({setPage, setIdentifier}) => {
           </div>
         </div>
         <div className="right-column">
-          <button className="back" onClick={() => handleLogout()}>&larr;&emsp;Exit to login</button>
+          <button className="back" onClick={() => handleLogout()}><i class='fa fa-arrow-left'></i>&emsp;Exit to login</button>
           <h1 className="formHeading" id="verifyHeading">Verify</h1>
           <form className="form" onSubmit={handleSubmit}>
             <p>Nearly in the conversation<br/>Please verify your email address</p>

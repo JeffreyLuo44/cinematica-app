@@ -6,14 +6,22 @@
   --color-light-grey: #f7f7f7;
   --color-grey: #d8d8d8;
   --color-grey-2: #efefef;
+  --color-grey-3: #9e9e9e;
   --color-dark-grey: #2f2f2f; 
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
 }
 
-button, body {
+button, body, textarea {
   font-family: -apple-system, BlinkMacSystemFont, 'Work Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -43,7 +51,10 @@ code {
 }
 
 .cinematica__logo.logo__colour-2 {
-  background-color: linear-gradient(to bottom, var(--color-blue), var(--color-magenta));
+  background-image: linear-gradient(90deg, var(--color-blue), var(--color-magenta)) !important;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent !important;
 }
 
 .cinematica__logo.logo__size-1 {

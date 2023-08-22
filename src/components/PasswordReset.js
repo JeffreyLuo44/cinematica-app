@@ -50,8 +50,8 @@ const ResetPassword = ({setPage}) => {
           </div>
         </div>
         <div className="right-column">
-        {resetStage === "1" && (<button className="back" onClick={() => setPage("login")}>&larr;&emsp;Back</button>)}
-        {resetStage === "2" && (<button className="back" onClick={() => setResetStage("1")}>&larr;&emsp;Back</button>)}
+        {resetStage === "1" && (<button className="back" onClick={() => setPage("login")}><i class='fa fa-arrow-left'></i>&emsp;Back</button>)}
+        {resetStage === "2" && (<button className="back" onClick={() => setResetStage("1")}><i class='fa fa-arrow-left'></i>&emsp;Back</button>)}
           <h1 className="formHeading">Forgot Password</h1>
           <br/><br/>
           {resetStage === "1" && (<form className="form" onSubmit={handleNavToStage2}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Timeline = ({setPage, identifier, setIdentifier, setProfileView}) => {
+const Profile = ({setPage, identifier, setIdentifier, profileView, setProfileView}) => {
   const [search, setSearch] = useState('');
   const [mockPosts, setMockPosts] = useState([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -20,18 +20,18 @@ const Timeline = ({setPage, identifier, setIdentifier, setProfileView}) => {
     [mockUser,'16/08/23 9:43pm', 'The visuals of Spider-Man: Across the Spider-Verse is simply GOREGOUS! #loveit',
     'spidermans.jpg', 'Spider-Man: Across the Spider-Verse (2023)', '238', '432']]);
     setMockComments([[[mockUser, '20/08/23 9:43pm', 'I agree! I don’t usually watch other genres, but this one is a must-watch!', '238'],
-    [otherMockUser2, '19/08/23 5:21pm', 'Thanks for the recommendation! I just left the cinema and WOW! That was AMAZING!', '552']],[]]);
+      [otherMockUser2, '19/08/23 5:21pm', 'Thanks for the recommendation! I just left the cinema and WOW! That was AMAZING!', '552']],[]]);
     // handleGetPosts();
     // handleGetNotificationPreference();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Post!");
-    // Send post data to server
-    // fetch('http://localhost:3001/post', {
-  };
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     console.log("Post!");
+//     // Send post data to server
+//     // fetch('http://localhost:3001/post', {
+//   };
 
   const handleLogout = () => {
     setIdentifier('');
@@ -42,6 +42,11 @@ const Timeline = ({setPage, identifier, setIdentifier, setProfileView}) => {
     /* Need to get username so this needs to be changed */
     setProfileView(username);
     setPage("profile");
+  }
+
+  const handleViewTimeline = () => {
+    setProfileView('');
+    setPage("timeline");
   }
 
   const handleToggleNotifications = () => {
@@ -71,7 +76,7 @@ const Timeline = ({setPage, identifier, setIdentifier, setProfileView}) => {
             <div className="cinematica__profile-circle" onClick={() => setDropdownVisible(!dropdownVisible)}></div>
             {dropdownVisible && (
             <div className="dropdown-menu">
-              <p onClick={() => handleViewProfile(mockUser)}>Profile</p>
+              <p onClick={() => handleViewTimeline()}>Timeline</p>
               <p onClick={handleLogout}>Log out</p>
             </div>
           )}
@@ -83,24 +88,29 @@ const Timeline = ({setPage, identifier, setIdentifier, setProfileView}) => {
         </div>
       </header>
       <div className="feed-container">
-        <form className="form" onSubmit={handleSubmit}>
-          <div>
-            <textarea className="post__text" placeholder="What's on your mind?"/><br/>
+        <div className="profile__container">
+          {/* Banner */}
+          <div className="profile__background">
+            <i class='fa fa-edit'></i>
           </div>
-          <div className="post__controls">
-            <div>
-              <i class='fa fa-image'></i>
-              <select>
-                <option selected disabled hidden>Select Movie or TV Show</option>
-                <option>Oppenheimer (2023)</option>
-                <option>Spider-Man: Across the Spider-Verse (2023)</option>
-              </select>
-            </div>
-            <div>
-              <button className="post__button" id="post" type="submit">Post</button>
-            </div>
+          {/* Profile picture and username */}
+          <div className="profile__name-photo-container">
+            <div className="profile__picture"></div>
+            <p className="profile__username">{profileView}</p>
           </div>
-        </form><br/>
+          {/* Follower counts */}
+          <div className="profile__follow-stats">
+            <p><strong>123</strong> Following</p>
+            <p><strong>123</strong> Followers</p>
+          </div>
+          {/* Profile tabs */}
+          <div className="profile__tabs">
+            <div>Posts</div>
+            <div>Replies</div>
+            <div>Likes</div>
+            <div>Movies</div>
+          </div>
+        </div>
         <div className="post-container">
           {viewPost === false && 
              mockPosts.map((post, index) => (
@@ -173,11 +183,11 @@ const Timeline = ({setPage, identifier, setIdentifier, setProfileView}) => {
                 </div>
               ))}
             </div>
-          </div>)}
+            </div>)}
         </div> 
       </div>
     </div>
   );
 };
     
-export default Timeline;
+export default Profile;

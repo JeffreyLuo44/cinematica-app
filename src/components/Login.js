@@ -27,7 +27,7 @@ const Login = ({setPage, identifier, setIdentifier}) => {
           </div>
         </div>
         <div className="right-column">
-          <button className="back" id="invisible-back">&larr;&emsp;Invisible back to keep alignment</button>
+          <button className="back" id="invisible-back"><i class='fa fa-arrow-left'></i>&emsp;Invisible back to keep alignment</button>
           <h1 className="formHeading">Login</h1>
           <form className="form" onSubmit={handleSubmit}>
             <label>Username or Email Address</label><br/>
