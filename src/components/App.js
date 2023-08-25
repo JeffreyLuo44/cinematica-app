@@ -8,9 +8,9 @@ import Timeline from './Timeline';
 import Profile from './Profile';
 
 function App() {
-  const [page, setPage] = useState("login");
+  const [page, setPage] = useState("timeline");
   const [identifier, setIdentifier] = useState('');
-  const [profileView, setProfileView] = useState('');
+  const [viewProfileUsername, setViewProfileUsername] = useState('');
 
   return (
     <div className="App">
@@ -18,8 +18,8 @@ function App() {
       {page==="register" && <Register setPage={setPage} setIdentifier={setIdentifier} />}
       {page==="verifyRegistration" && <VerifyRegistration setPage={setPage} setIdentifier={setIdentifier}/>}
       {page==="passwordReset" && <PasswordReset setPage={setPage}/>}
-      {page==="timeline" && <Timeline setPage={setPage} identifier={identifier} setIdentifier={setIdentifier} setProfileView={setProfileView}/>}
-      {page==="profile" && <Profile setPage={setPage} identifier={identifier} setIdentifier={setIdentifier} profileView={profileView} setProfileView={setProfileView}/>}
+      {page==="timeline" && <Timeline setPage={setPage} identifier={identifier} setIdentifier={setIdentifier} setViewProfileUsername={setViewProfileUsername}/>}
+      {page==="profile" && <Profile setPage={setPage} identifier={identifier} setIdentifier={setIdentifier} viewProfileUsername={viewProfileUsername} setViewProfileUsername={setViewProfileUsername}/>}
     </div>
   );
 }

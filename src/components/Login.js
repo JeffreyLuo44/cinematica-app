@@ -8,7 +8,11 @@ const Login = ({setPage, identifier, setIdentifier}) => {
     console.log("Login!");
     // Send login data to server
     // fetch('http://localhost:3001/login', {
+    //Change later
+    // setIdentifier("ThatMovieAddict");
+    setIdentifier("SpiderManFan");
     setPage("timeline");
+
   };
 
   return (
@@ -37,6 +41,8 @@ const Login = ({setPage, identifier, setIdentifier}) => {
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}  placeholder="" autoComplete="new-password" required /> <br/>
             <br/>
             <button className="standard" type="submit">Log In</button>
+            <p className="link" onClick={() => setPage("timeline")}>Continue as guest</p>
+            <br/>
             <p className="link" onClick={() => setPage("register")}>New to the conversation? Register here</p>
           </form>
         </div>

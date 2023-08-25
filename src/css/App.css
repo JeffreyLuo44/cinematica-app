@@ -10,6 +10,10 @@
   width: 50%;
 }
 
+.hide {
+  display: none;
+}
+
 /*
  * Register and Login Page Styling
  */
@@ -221,6 +225,17 @@ input.searchBar {
   align-items: center;
 }
 
+.timeline__tabs {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: var(--color-grey-2);
+  padding: 0.5rem;
+  font-weight: bold;
+  color: var(--color-grey-3);
+  border-radius: 0.7rem;
+}
+
 .cinematica__header-upper div {
   display: flex;
   align-items: center;
@@ -251,6 +266,14 @@ input.searchBar {
   border-radius: 50%;
 }
 
+.cinematica__guest-view-button {
+  background-color: var(--color-magenta);
+  color: var(--color-light-grey);
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 10rem;
+}
+
 header {
   position: sticky;
 }
@@ -264,10 +287,21 @@ textarea.post__text {
 }
 
 .mock-post {
+  position: relative;
   background-color: var(--color-light-grey);
   padding: 1.2rem;
   max-width: 100%;
   margin-top: 1.3rem;
+}
+
+.post__delete-icon {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: var(--color-grey);
+  color: var(--color-red);
+  padding: 0.3rem 0.5rem;
+  border-radius: 50%;
 }
 
 .post-image {
@@ -319,7 +353,10 @@ textarea.post__text {
   font-size: 1.4rem;
 }
 
-.profile__follow-stats {
+.profile__stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: var(--color-light-grey);
   padding: 3rem 1rem 0 1rem;
 }
@@ -327,6 +364,13 @@ textarea.post__text {
 .profile__follow-stats > * {
   display: inline-block;
   margin-right: 1rem;
+}
+
+.profile__follow-button {
+  background-color: var(--color-magenta);
+  color: var(--color-light-grey);
+  padding: 0.6rem 2rem;
+  border-radius: 10rem;
 }
 
 .profile__tabs {

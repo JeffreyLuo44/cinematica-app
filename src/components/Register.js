@@ -5,15 +5,10 @@ const Register = ({setPage, setIdentifier}) => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [movieSearch, setMovieSearch] = useState('');
-  const handleNavToStage2 = (e) => {
-    e.preventDefault();
-    setRegisterStage("2");
-  }
 
-  const handleNavToStage3 = (e) => {
-    e.preventDefault();
+  const handleSubmit = (e) => {
     const errors = [];
+    e.preventDefault();
     if (username.length < 3 || username.length > 14) {
       errors.push('Username should be between 3 and 14 characters.');
     }
@@ -29,17 +24,12 @@ const Register = ({setPage, setIdentifier}) => {
       for (var i = 0; i < errors.length; i++)
         console.log(errors[i]);
     } else {
-      setRegisterStage("3");
+      console.log("Register!");
+      // Send register data to server
+      // fetch('http://localhost:3001/register', {
+      setIdentifier(email);
+      setPage("verifyRegistration");
     }
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Register!");
-    // Send register data to server
-    // fetch('http://localhost:3001/register', {
-    setIdentifier(email);
-    setPage("verifyRegistration");
   };
 
   return (
@@ -62,35 +52,21 @@ const Register = ({setPage, setIdentifier}) => {
         {registerStage === "2" && (<button className="back" onClick={() => setRegisterStage("1")}><i class='fa fa-arrow-left'></i>&emsp;Back</button>)}
         {registerStage === "3" && (<button className="back" onClick={() => setRegisterStage("2")}><i class='fa fa-arrow-left'></i>&emsp;Back</button>)}
           <h1 className="formHeading">Register</h1>
-          <br/><br/>
-          {registerStage === "1" && (<form className="form" onSubmit={handleNavToStage2}>
-            <label>Email Address</label><br/>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required/><br/>
-            <br/>
-            <button className="standard" type="submit">Next</button><br/>
-            <br/>
-            <p className="link" onClick={() => setPage("login")}>Already have an account? Login here</p>
-          </form>)}
-          {registerStage === "2" && (<form className="form" onSubmit={handleNavToStage3}>
+          <form className="form" onSubmit={handleSubmit}>
             <label>Username</label><br/>
             <input type="text" value={username.trim()} onChange={(e) => setUsername(e.target.value)} required /><br/>
+            <br/>
+            <label>Email Address</label><br/>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required/><br/>
             <br/>
             <label>Password</label> <br></br>
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}  placeholder="Enter strong password here..." autoComplete="new-password" required /><br/>
             <br/>
-            <button className="standard" type="submit">Next</button>
-          </form>)}
-          {registerStage === "3" && (<form className="form" onSubmit={handleSubmit}>
-            <label className="form__label-centred">Search and select movies you have seen</label><br/>
-            <br/>
-            <input type="text" className="searchBar" value={movieSearch} onChange={(e) => setMovieSearch(e.target.value)} required /><br/>
-            <br/>
-            <div className="movie-container">
-
-            </div>
-            <br/>
             <button className="standard" type="submit">Register</button>
-          </form>)}
+            <p className="link" onClick={() => setPage("timeline")}>Continue as guest</p>
+            <br/>
+            <p className="link" onClick={() => setPage("login")}>Already have an account? Login here</p>
+          </form>
         </div>
       </div>
     </div>
