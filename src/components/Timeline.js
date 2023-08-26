@@ -12,19 +12,20 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername}) 
   const [selectedPost, setSelectedPost] = useState([]);
   const [selectedPostIndex, setSelectedPostIndex] = useState(null);
   const [viewPost, setViewPost] = useState(false);
-  const [newReply, setNewReply] = useState("");
+  const [createReplyText, setCreateReplyText] = useState("");
   const [mockReplies, setMockReplies] = useState("");
   const [mockUser] = useState("SpiderManFan");
   const [otherMockUser] = useState("ThatMovieAddict");
   const [otherMockUser2] = useState("PenguinClub");
 
   useEffect(() => {
-    setMockPosts([[otherMockUser, '18/08/23 7:56am', 'Just watched #Oppenheimer and I’m blown away by the brilliant performance of Cillian Murphy and the stunning cinematography of Hoyte van Hoytema. Nolan has done it again, delivering a masterpiece that explores the moral dilemmas and personal struggles of the man behind the atomic bomb. A must-watch for all film lovers! 🎥👏👏👏',
+    // Eventually need to add spoiler field
+    setMockPosts([[otherMockUser, '18/8/23 7:56am', 'Just watched #Oppenheimer and I’m blown away by the brilliant performance of Cillian Murphy and the stunning cinematography of Hoyte van Hoytema. Nolan has done it again, delivering a masterpiece that explores the moral dilemmas and personal struggles of the man behind the atomic bomb. A must-watch for all film lovers! 🎥👏👏👏',
     '', 'Oppenheimer (2023)', '657', '1,026', "hide"],
-    [mockUser,'16/08/23 9:43pm', 'The visuals of Spider-Man: Across the Spider-Verse is simply GOREGOUS! #loveit',
+    [mockUser,'16/8/23 9:43pm', 'The visuals of Spider-Man: Across the Spider-Verse is simply GOREGOUS! #loveit',
     'spidermans.jpg', 'Spider-Man: Across the Spider-Verse (2023)', '238', '432', "hide"]]);
-    setMockReplies([[[mockUser, '20/08/23 9:43pm', 'I agree! I don’t usually watch other genres, but this one is a must-watch!', '238', "hide"],
-    [otherMockUser2, '19/08/23 5:21pm', 'Thanks for the recommendation! I just left the cinema and WOW! That was AMAZING!', '552', "hide"]],[]]);
+    setMockReplies([[[mockUser, '20/8/23 9:43pm', 'I agree! I don’t usually watch other genres, but this one is a must-watch!', '238', "hide"],
+    [otherMockUser2, '19/8/23 5:21pm', 'Thanks for the recommendation! I just left the cinema and WOW! That was AMAZING!', '552', "hide"]],[]]);
     // handleGetPosts();
     // handleGetNotificationPreference();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -33,8 +34,19 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername}) 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Post!");
+    // Mock post creation
+    const updatedMockPosts = [...mockPosts];
+    let newPost = [identifier, getFormattedDateTime(), createPostText, '', 'No movie tagged', 0, 0, "hide"];
+    updatedMockPosts.unshift(newPost);
+    const updatedMockReplies = [...mockReplies];
+    updatedMockReplies.unshift([]);
+    setMockPosts(updatedMockPosts);
+    setMockReplies(updatedMockReplies);
     // Send post data to server
     // fetch('http://localhost:3001/post', {
+    setCreatePostText('');
+    setSearchTag('');
+    setIsCreateSpoilerPost(false);
   };
 
   const handleLogout = () => {
@@ -54,9 +66,11 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername}) 
   }
 
   const handleToggleReplies = (index) => {
+    setCreateReplyText('');
     if (index !== "none"){
+      console.log(index);
       const selectedPostFromPosts = [...mockPosts[index]];
-      /* Remove the trash icon when viewing Repliess of your own post */
+      /* Remove the trash icon when viewing Replies of your own post */
       if (selectedPostFromPosts.lastIndexOf("post__delete-icon") !== -1)
         selectedPostFromPosts[selectedPostFromPosts.lastIndexOf("post__delete-icon")] = "hide";
       setSelectedPost(selectedPostFromPosts);
@@ -67,9 +81,9 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername}) 
       setSelectedPostIndex(null);
       setViewPost(false);
       // Get the posts again
-      setMockPosts([[otherMockUser, '18/08/23 7:56am', 'Just watched #Oppenheimer and I’m blown away by the brilliant performance of Cillian Murphy and the stunning cinematography of Hoyte van Hoytema. Nolan has done it again, delivering a masterpiece that explores the moral dilemmas and personal struggles of the man behind the atomic bomb. A must-watch for all film lovers! 🎥👏👏👏',
+      setMockPosts([[otherMockUser, '18/8/23 7:56am', 'Just watched #Oppenheimer and I’m blown away by the brilliant performance of Cillian Murphy and the stunning cinematography of Hoyte van Hoytema. Nolan has done it again, delivering a masterpiece that explores the moral dilemmas and personal struggles of the man behind the atomic bomb. A must-watch for all film lovers! 🎥👏👏👏',
       '', 'Oppenheimer (2023)', '657', '1,026', "hide"],
-      [mockUser,'16/08/23 9:43pm', 'The visuals of Spider-Man: Across the Spider-Verse is simply GOREGOUS! #loveit',
+      [mockUser,'16/8/23 9:43pm', 'The visuals of Spider-Man: Across the Spider-Verse is simply GOREGOUS! #loveit',
       'spidermans.jpg', 'Spider-Man: Across the Spider-Verse (2023)', '238', '432', "hide"]]);
     }
   };
@@ -85,19 +99,38 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername}) 
       let lastIndex = newArray[index].lastIndexOf("hide") !== -1 ? newArray[index].lastIndexOf("hide") : newArray[index].lastIndexOf("post__delete-icon");
       newArray[index][lastIndex] = newArray[index][lastIndex] === "hide" ? "post__delete-icon" : "hide";
       setMockPosts(newArray);
-    } else if (type === "Replies") {
+    } else if (type === "replies") {
       let lastIndex = newArray[selectedPostIndex][index].lastIndexOf("hide") !== -1 ? newArray[selectedPostIndex][index].lastIndexOf("hide") : newArray[selectedPostIndex][index].lastIndexOf("post__delete-icon");
       newArray[selectedPostIndex][index][lastIndex] = newArray[selectedPostIndex][index][lastIndex] === "hide" ? "post__delete-icon" : "hide";
       setMockReplies(newArray);
     }
   };
 
+  function getFormattedDateTime(){
+    let currentDate = new Date(); 
+    // Month is 0 based.
+    let currentMonth = currentDate.getMonth() + 1;
+    let yearTwoDigits = currentDate.getFullYear() - 2000;
+    let currentHours = currentDate.getHours() > 12 ? currentDate.getHours() - 12 : currentDate.getHours();
+    let currentMinutes = currentDate.getMinutes() < 10 ? "0" + currentDate.getMinutes(): currentDate.getMinutes();
+    let amOrPM = currentDate.getHours() > 11 ? "pm" : "am";
+    return currentDate.getDate() + "/" + currentMonth + "/" + yearTwoDigits + " " +  currentHours + ":" + currentMinutes + amOrPM;
+  }
+
+  const handleAddReply = () => {
+    const updatedMockReplies = [...mockReplies];
+    let newReply = [identifier, getFormattedDateTime(), createReplyText, 0, "hide"];
+    updatedMockReplies[selectedPostIndex].unshift(newReply);
+    setMockReplies(updatedMockReplies);
+  }
+
   return (
     <div className="cinematica__content">
       <header>
         <div className="cinematica__header-upper">
-          <p className="cinematica__logo logo__size-2 logo__colour-2">Cinematica</p>
+          <p className="cinematica__logo logo__size-2 logo__colour-2" onClick={() => setPage("timeline")}>Cinematica</p>
           <div>
+            <i class="fa fa-home" aria-hidden="true" onClick={() => setPage("timeline")}></i>
             {identifier !== "" ? <div>
               {notificationOn ? <i class='fa fa-bell' onClick={() => handleToggleNotifications()}></i> : <i class='fa fa-bell-slash' onClick={() => handleToggleNotifications()}></i>}
               <p onClick={() => handleViewProfile(identifier)}>{identifier}</p>
@@ -128,7 +161,7 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername}) 
             <br/>
             <div>
             {/*Update posts as input is being typed in*/}
-            <input type="text" className="searchBar search__timeline" value={searchTag} placeholder="Enter tag..." onChange={(e) => setSearchTag(e.target.value)} required /><br/>
+            <input type="text" className="searchBar search__timeline" value={searchTag} placeholder="Enter tag..." onChange={(e) => setSearchTag(e.target.value)} /><br/>
           </div>
           </div>
           <div className="post__controls">
@@ -193,27 +226,27 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername}) 
               </div>
               <br/>
               <div className="comment-box__container">
-                <input type="text" className="comment-box__text" value={newReply} placeholder="Write your Replies..." onChange={(e) => setNewReply(e.target.value)} required />
-                <i class='fa fa-send'></i>
+                <input type="text" className="comment-box__text" value={createReplyText} maxLength={280} placeholder="Write your Replies..." onChange={(e) => setCreateReplyText(e.target.value)} required />
+                <i class='fa fa-send' onClick={() => handleAddReply()}></i>
               </div>
               <div>
-              {selectedPostIndex != null && mockReplies[selectedPostIndex].map((Replies, index) => (
-                <div className="mock-post" onMouseEnter={e => toggleDeleteIcon(mockReplies, "Replies", index)} onMouseLeave={e => toggleDeleteIcon(mockReplies, "Replies", index)}>
+              {selectedPostIndex != null && mockReplies[selectedPostIndex].map((replies, index) => (
+                <div className="mock-post" onMouseEnter={e => toggleDeleteIcon(mockReplies, "replies", index)} onMouseLeave={e => toggleDeleteIcon(mockReplies, "replies", index)}>
                     <div className="post__details">
                         <div className="post__author-container">
-                        <div className="cinematica__profile-circle" onClick={() => handleViewProfile(Replies[0])}></div>
+                        <div className="cinematica__profile-circle" onClick={() => handleViewProfile(replies[0])}></div>
                         <div>
-                            <p className="post-author" onClick={() => handleViewProfile(Replies[0])}>{Replies[0]}</p>
+                            <p className="post-author" onClick={() => handleViewProfile(replies[0])}>{replies[0]}</p>
                         </div>
                         </div>
                         <div>
-                          <p className="post-date">{Replies[1]}</p>
+                          <p className="post-date">{replies[1]}</p>
                         </div>
                     </div>
-                    {Replies[0] === mockUser && <div className={Replies[4]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
-                    <p className="post-content">{Replies[2]}</p>
+                    {replies[0] === mockUser && <div className={replies[4]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
+                    <p className="post-content">{replies[2]}</p>
                     <div className="post-stats">
-                        <div className="post-likes"><i class='	fa fa-heart-o'></i> {Replies[3]}</div>
+                        <div className="post-likes"><i class='	fa fa-heart-o'></i> {replies[3]}</div>
                     </div>
                 </div>
               ))}
