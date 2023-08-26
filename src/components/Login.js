@@ -10,7 +10,7 @@ const Login = ({setPage, identifier, setIdentifier}) => {
     // fetch('http://localhost:3001/login', {
     //Change later
     // setIdentifier("ThatMovieAddict");
-    setIdentifier("SpiderManFan");
+    setIdentifier("ThatMovieAddict");
     setPage("timeline");
 
   };

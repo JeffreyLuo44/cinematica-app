@@ -1,30 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setViewProfileUsername}) => {
-  // const [search, setSearch] = useState('');
-  const [mockPosts, setMockPosts] = useState([]);
-  const [dropdownVisible, setDropdownVisible] = useState(false);
+const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setViewProfileUsername, mockPosts, setMockPosts, mockReplies, setMockReplies}) => {
   const [notificationOn, setNotificationOn] = useState(true);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
   const [selectedPost, setSelectedPost] = useState([]);
   const [selectedPostIndex, setSelectedPostIndex] = useState(null);
   const [viewPost, setViewPost] = useState(false);
   const [createReplyText, setCreateReplyText] = useState("");
-  const [mockReplies, setMockReplies] = useState("");
-  const [mockUser] = useState("SpiderManFan");
-  const [otherMockUser] = useState("ThatMovieAddict");
-  const [otherMockUser2] = useState("PenguinClub");
-
-  useEffect(() => {
-    setMockPosts([[otherMockUser, '18/8/23 7:56am', 'Just watched #Oppenheimer and I’m blown away by the brilliant performance of Cillian Murphy and the stunning cinematography of Hoyte van Hoytema. Nolan has done it again, delivering a masterpiece that explores the moral dilemmas and personal struggles of the man behind the atomic bomb. A must-watch for all film lovers! 🎥👏👏👏',
-    '', 'Oppenheimer (2023)', '657', '1,026', "hide"],
-    [mockUser,'16/0/23 9:43pm', 'The visuals of Spider-Man: Across the Spider-Verse is simply GOREGOUS! #loveit',
-    'spidermans.jpg', 'Spider-Man: Across the Spider-Verse (2023)', '238', '432', "hide"]]);
-    setMockReplies([[[mockUser, '20/8/23 9:43pm', 'I agree! I don’t usually watch other genres, but this one is a must-watch!', '238', "hide"],
-      [otherMockUser2, '19/8/23 5:21pm', 'Thanks for the recommendation! I just left the cinema and WOW! That was AMAZING!', '552', "hide"]],[]]);
-    // handleGetPosts();
-    // handleGetNotificationPreference();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
@@ -57,10 +40,11 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
   const handleToggleReplies = (index) => {
     setCreateReplyText('');
     if (index !== "none"){
+      handleTempRemoveSpoilerMessage(index)
       const selectedPostFromPosts = [...mockPosts[index]];
       /* Remove the trash icon when viewing Replies of your own post */
       if (selectedPostFromPosts.lastIndexOf("post__delete-icon") !== -1)
-        selectedPostFromPosts[selectedPostFromPosts.lastIndexOf("post__delete-icon")] = "hide";
+        selectedPostFromPosts[selectedPostFromPosts.lastIndexOf("post__delete-icon")] = "hideTrashIcon";
       setSelectedPost(selectedPostFromPosts);
       setSelectedPostIndex(index);
       setViewPost(true);
@@ -68,28 +52,28 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
       setSelectedPost([]);
       setSelectedPostIndex(null);
       setViewPost(false);
-      // Get the posts again
-      setMockPosts([[otherMockUser, '18/8/23 7:56am', 'Just watched #Oppenheimer and I’m blown away by the brilliant performance of Cillian Murphy and the stunning cinematography of Hoyte van Hoytema. Nolan has done it again, delivering a masterpiece that explores the moral dilemmas and personal struggles of the man behind the atomic bomb. A must-watch for all film lovers! 🎥👏👏👏',
-      '', 'Oppenheimer (2023)', '657', '1,026', "hide"],
-      [mockUser,'16/8/23 9:43pm', 'The visuals of Spider-Man: Across the Spider-Verse is simply GOREGOUS! #loveit',
-      'spidermans.jpg', 'Spider-Man: Across the Spider-Verse (2023)', '238', '432', "hide"]]);
+      // Restore post to hiding the trash icon to prevent error
+      const restorePosts = [...mockPosts];
+      let lastIndex = restorePosts[selectedPostIndex].lastIndexOf("hideTrashIcon") !== -1 ? restorePosts[selectedPostIndex].lastIndexOf("hideTrashIcon") : restorePosts[selectedPostIndex].lastIndexOf("post__delete-icon");
+      restorePosts[selectedPostIndex][lastIndex] = "hideTrashIcon";
+      setMockPosts(restorePosts);
     }
   };
 
   const toggleDeleteIcon = (array, type, index) => {
     const newArray = [...array];
     if (index === -1){
-      let lastIndex = newArray.lastIndexOf("hide") !== -1 ? newArray.lastIndexOf("hide") : newArray.lastIndexOf("post__delete-icon");
-      newArray[lastIndex] = newArray[lastIndex] === "hide" ? "post__delete-icon" : "hide";
+      let lastIndex = newArray.lastIndexOf("hideTrashIcon") !== -1 ? newArray.lastIndexOf("hideTrashIcon") : newArray.lastIndexOf("post__delete-icon");
+      newArray[lastIndex] = newArray[lastIndex] === "hideTrashIcon" ? "post__delete-icon" : "hideTrashIcon";
       setSelectedPost(newArray);
     }
     else if (type === "post"){
-      let lastIndex = newArray[index].lastIndexOf("hide") !== -1 ? newArray[index].lastIndexOf("hide") : newArray[index].lastIndexOf("post__delete-icon");
-      newArray[index][lastIndex] = newArray[index][lastIndex] === "hide" ? "post__delete-icon" : "hide";
+      let lastIndex = newArray[index].lastIndexOf("hideTrashIcon") !== -1 ? newArray[index].lastIndexOf("hideTrashIcon") : newArray[index].lastIndexOf("post__delete-icon");
+      newArray[index][lastIndex] = newArray[index][lastIndex] === "hideTrashIcon" ? "post__delete-icon" : "hideTrashIcon";
       setMockPosts(newArray);
     } else if (type === "replies") {
-      let lastIndex = newArray[selectedPostIndex][index].lastIndexOf("hide") !== -1 ? newArray[selectedPostIndex][index].lastIndexOf("hide") : newArray[selectedPostIndex][index].lastIndexOf("post__delete-icon");
-      newArray[selectedPostIndex][index][lastIndex] = newArray[selectedPostIndex][index][lastIndex] === "hide" ? "post__delete-icon" : "hide";
+      let lastIndex = newArray[selectedPostIndex][index].lastIndexOf("hideTrashIcon") !== -1 ? newArray[selectedPostIndex][index].lastIndexOf("hideTrashIcon") : newArray[selectedPostIndex][index].lastIndexOf("post__delete-icon");
+      newArray[selectedPostIndex][index][lastIndex] = newArray[selectedPostIndex][index][lastIndex] === "hideTrashIcon" ? "post__delete-icon" : "hideTrashIcon";
       setMockReplies(newArray);
     }
   };
@@ -107,9 +91,28 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
 
   const handleAddReply = () => {
     const updatedMockReplies = [...mockReplies];
-    let newReply = [identifier, getFormattedDateTime(), createReplyText, 0, "hide"];
+    let newReply = [identifier, getFormattedDateTime(), createReplyText, 0, "hideTrashIcon"];
     updatedMockReplies[selectedPostIndex].unshift(newReply);
     setMockReplies(updatedMockReplies);
+    setCreateReplyText('');
+  }
+
+  const handleTempRemoveSpoilerMessage = (index) => {
+    const restorePosts = [...mockPosts];
+    let lastIndex = restorePosts[index].lastIndexOf(true);
+    restorePosts[index][lastIndex] = false;
+    setMockPosts(restorePosts);
+  }
+
+  const handleTempRemoveAllSpoilers = () => {
+    let restorePosts = [...mockPosts];
+    if (restorePosts.length > 0){
+      restorePosts.map((post) => {
+        post[8] = false;
+        return post;
+      });
+    }
+    setMockPosts(restorePosts);
   }
 
   return (
@@ -125,8 +128,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
               <div className="cinematica__profile-circle" onClick={() => setDropdownVisible(!dropdownVisible)}></div>
               {dropdownVisible && (
               <div className="dropdown-menu">
-                <p onClick={() => handleViewTimeline()}>Timeline</p>
-                <p onClick={handleLogout}>Log out</p>
+                <i class="fa fa-sign-out" aria-hidden="true" onClick={handleLogout}></i>
               </div>
               )}
             </div>
@@ -138,9 +140,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
           </div>
         </div>
         <div>
-          {/*Update posts as input is being typed in*/}
-          {/* <input type="text" className="searchBar search__timeline" value={search} placeholder="Explore" onChange={(e) => setSearch(e.target.value)} required /><br/> */}
-        </div>
+      </div>
       </header>
       <div className="feed-container">
         <div className="profile__container">
@@ -170,6 +170,9 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
           </div>
         </div>
         <div className="post-container">
+          <br/>
+          <label for="revealAllSpoilers">Reveal all potential spoiler posts</label>
+          <input type="radio" value="revealAllSpoilers" onChange={(e) => handleTempRemoveAllSpoilers()} />
           {viewPost === false && 
              mockPosts.map((post, index) => (
                 <div className="mock-post"  onMouseEnter={e => toggleDeleteIcon(mockPosts, "post", index)} onMouseLeave={e => toggleDeleteIcon(mockPosts, "post", index)}>
@@ -184,9 +187,9 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
                           <p className="post-date">{post[1]}</p>
                         </div>
                     </div>
-                    {post[0] === mockUser && <div className={post[7]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
-                    <p className="post-content">{post[2]}</p>
-                    {post[3] !== '' && <img src={post[3]} alt={`Post ${index}`} className="post-image" />}
+                    {post[0] === identifier && <div className={post[7]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
+                    {post[8] === false || post[0] === identifier ? <p className="post-content">{post[2]}</p> : <p className="post-content" onClick={() => handleTempRemoveSpoilerMessage(index)}>Warning: Potential spoilers! Click this text or "Replies" to reveal...</p>}
+                    {post[3] !== '' && (post[8] === false || post[0] === identifier) && <img src={post[3]} alt={`Post ${index}`} className="post-image" />}
                     <p className="post-movie"><i class='fa fa-film'></i> {post[4]}</p>
                     <div className="post-stats">
                         <div className="post-likes"><i class='	fa fa-heart-o'></i> {post[5]}</div>
@@ -208,7 +211,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
                       <p className="post-date">{selectedPost[1]}</p>
                     </div>
                 </div>
-                {selectedPost[0] === mockUser && <div className={selectedPost[7]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
+                {selectedPost[0] === identifier && <div className={selectedPost[7]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
                 <p className="post-content">{selectedPost[2]}</p>
                 {selectedPost[3] !== '' && <img src={selectedPost[3]} alt={`Post`} className="post-image" />}
                 <p className="post-movie"><i class='fa fa-film'></i> {selectedPost[4]}</p>
@@ -236,7 +239,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
                         <p className="post-date">{replies[1]}</p>
                         </div>
                     </div>
-                    {replies[0] === mockUser && <div className={replies[4]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
+                    {replies[0] === identifier && <div className={replies[4]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
                     <p className="post-content">{replies[2]}</p>
                     <div className="post-stats">
                         <div className="post-likes"><i class='	fa fa-heart-o'></i> {replies[3]}</div>
