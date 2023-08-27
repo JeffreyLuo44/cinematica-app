@@ -135,6 +135,7 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
 
   return (
     <div className="cinematica__content">
+      {/* Header */}
       <header>
         <div className="cinematica__header-upper">
           <p className="cinematica__logo logo__size-2 logo__colour-2" onClick={() => setPage("timeline")}>Cinematica</p>
@@ -158,12 +159,14 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
             </div>}
           </div>
         </div>
+        {/* Timeline tabs */}
         <div className="timeline__tabs">
           <div onClick={() => alert('test')}>All posts</div>
           <div onClick={() => alert('test')}>Following</div>
         </div>
       </header>
       <div className="feed-container">
+        {/* Create post */}
         {viewPost === false && <form className="form" onSubmit={handleSubmit}>
           <div>
             <textarea className="post__text" placeholder="What's on your mind?" maxLength={280} value={createPostText} onChange={(e) => setCreatePostText(e.target.value)} required /><br/>
@@ -185,8 +188,10 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
           <br/>
         </form>}
         <div className="post-container">
+           {/* Pre-posts */}
           <label for="revealAllSpoilers">Reveal all potential spoiler posts</label>
           <input type="radio" value="revealAllSpoilers" onChange={(e) => handleTempRemoveAllSpoilers()} />
+          {/* Posts, mapped out */}
           {viewPost === false && 
              mockPosts.map((post, index) => (
                 <div className="mock-post" onMouseEnter={e => toggleDeleteIcon(mockPosts, "post", index)} onMouseLeave={e => toggleDeleteIcon(mockPosts, "post", index)}>
@@ -211,6 +216,7 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
                     </div>
                 </div>
             ))}
+            {/* Selected post with reply section */}
             {viewPost === true && (<div>
               <button className="back" onClick={() => handleToggleReplies("none")}><i class='fa fa-arrow-left'></i>&emsp;Back</button>
               <div className="mock-post" onMouseEnter={e => toggleDeleteIcon(selectedPost, "post", -1)} onMouseLeave={e => toggleDeleteIcon(selectedPost, "post", -1)}>
@@ -235,11 +241,13 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
                 </div>
               </div>
               <br/>
+              {/* Create reply */}
               <div className="comment-box__container">
                 <input type="text" className="comment-box__text" value={createReplyText} maxLength={280} placeholder="Write your Replies..." onChange={(e) => setCreateReplyText(e.target.value)} required />
                 <i class='fa fa-send' onClick={() => handleAddReply()}></i>
               </div>
               <div>
+              {/* Replies for selected post, mapped out */}
               {selectedPostIndex != null && mockReplies[selectedPostIndex].map((replies, index) => (
                 <div className="mock-post" onMouseEnter={e => toggleDeleteIcon(mockReplies, "replies", index)} onMouseLeave={e => toggleDeleteIcon(mockReplies, "replies", index)}>
                     <div className="post__details">

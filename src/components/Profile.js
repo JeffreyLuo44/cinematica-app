@@ -117,6 +117,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
 
   return (
     <div className="cinematica__content">
+      {/* Header */}
       <header>
         <div className="cinematica__header-upper">
           <p className="cinematica__logo logo__size-2 logo__colour-2" onClick={() => handleViewTimeline()}>Cinematica</p>
@@ -170,9 +171,11 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
           </div>
         </div>
         <div className="post-container">
+          {/* Pre-posts */}
           <br/>
           <label for="revealAllSpoilers">Reveal all potential spoiler posts</label>
           <input type="radio" value="revealAllSpoilers" onChange={(e) => handleTempRemoveAllSpoilers()} />
+          {/* Posts, mapped out */}
           {viewPost === false && 
              mockPosts.map((post, index) => (
                 <div className="mock-post"  onMouseEnter={e => toggleDeleteIcon(mockPosts, "post", index)} onMouseLeave={e => toggleDeleteIcon(mockPosts, "post", index)}>
@@ -197,6 +200,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
                     </div>
                 </div>
             ))}
+            {/* Selected post with reply section */}
             {viewPost === true && (<div>
               <button className="back" onClick={() => handleToggleReplies("none")}><i class='fa fa-arrow-left'></i>&emsp;Back</button>
               <div className="mock-post" onMouseEnter={e => toggleDeleteIcon(selectedPost, "post", -1)} onMouseLeave={e => toggleDeleteIcon(selectedPost, "post", -1)}>
@@ -221,11 +225,13 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
                 </div>
               </div>
               <br/>
+              {/* Create reply */}
               <div className="comment-box__container">
                 <input type="text" className="comment-box__text" value={createReplyText} maxLength={280} placeholder="Write your Replies..." onChange={(e) => setCreateReplyText(e.target.value)} required />
                 <i class='fa fa-send' onClick={() => handleAddReply()}></i>
               </div>
               <div>
+              {/* Replies for selected post, mapped out */}
               {selectedPostIndex != null && mockReplies[selectedPostIndex].map((replies, index) => (
                 <div className="mock-post" onMouseEnter={e => toggleDeleteIcon(mockReplies, "replies", index)} onMouseLeave={e => toggleDeleteIcon(mockReplies, "replies", index)}>
                     <div className="post__details">
