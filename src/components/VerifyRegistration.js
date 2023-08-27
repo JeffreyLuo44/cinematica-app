@@ -5,10 +5,12 @@ const VerifyRegistration = ({setPage, setIdentifier}) => {
   const [otpEntry2, setOTPEntry2] = useState('');
   const [otpEntry3, setOTPEntry3] = useState('');
   const [otpEntry4, setOTPEntry4] = useState('');
+  const [otpEntry5, setOTPEntry5] = useState('');
+  const [otpEntry6, setOTPEntry6] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("OTP: " + otpEntry1 + otpEntry2 + otpEntry3 + otpEntry4);
+    console.log("OTP: " + otpEntry1 + otpEntry2 + otpEntry3 + otpEntry4 + otpEntry5 + otpEntry6);
     // Send OTP data to server
     // fetch('http://localhost:3001/verifyOTP', {
     setPage("timeline");
@@ -38,6 +40,22 @@ const VerifyRegistration = ({setPage, setIdentifier}) => {
 
   const handleInput4Change = (e) => {
     setOTPEntry4(e.target.value);
+    if (e.target.value !== "")
+        document.getElementById(e.target.id).nextSibling.focus();
+    else 
+        document.getElementById(e.target.id).previousSibling.focus();
+  }
+
+  const handleInput5Change = (e) => {
+    setOTPEntry5(e.target.value);
+    if (e.target.value !== "")
+        document.getElementById(e.target.id).nextSibling.focus();
+    else 
+        document.getElementById(e.target.id).previousSibling.focus();
+  }
+
+  const handleInput6Change = (e) => {
+    setOTPEntry6(e.target.value);
     if (e.target.value === "")
         document.getElementById(e.target.id).previousSibling.focus();
   }
@@ -71,7 +89,9 @@ const VerifyRegistration = ({setPage, setIdentifier}) => {
             <input type="text" className="otpEntry" id="otpEntry1" value={otpEntry1} maxLength={1} onChange={(e) => handleInput1Change(e)} required/>
             <input type="text" className="otpEntry" id="otpEntry2" value={otpEntry2} maxLength={1} onChange={(e) => handleInput2Change(e)} required/>
             <input type="text" className="otpEntry" id="otpEntry3" value={otpEntry3} maxLength={1} onChange={(e) => handleInput3Change(e)} required/>
-            <input type="text" className="otpEntry" id="otpEntry4" value={otpEntry4} maxLength={1} onChange={(e) => handleInput4Change(e)} required/><br/>
+            <input type="text" className="otpEntry" id="otpEntry4" value={otpEntry4} maxLength={1} onChange={(e) => handleInput4Change(e)} required/>
+            <input type="text" className="otpEntry" id="otpEntry5" value={otpEntry5} maxLength={1} onChange={(e) => handleInput5Change(e)} required/>
+            <input type="text" className="otpEntry" id="otpEntry6" value={otpEntry6} maxLength={1} onChange={(e) => handleInput6Change(e)} required/><br/>
             <br/>
             <button className="standard" id="resend-button">Resend One Time Password</button>
             <br/>
