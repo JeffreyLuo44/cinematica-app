@@ -8,6 +8,8 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
   const [selectedPostIndex, setSelectedPostIndex] = useState(null);
   const [viewPost, setViewPost] = useState(false);
   const [createReplyText, setCreateReplyText] = useState("");
+  const [viewFollowers, setViewFollowers] = useState(false);
+  const [viewFollowing, setViewFollowing] = useState(false);
 
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
@@ -35,6 +37,22 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
   const handleToggleNotifications = () => {
     setNotificationOn(!notificationOn);
     /* Need to apply to database */
+  }
+
+  const handleViewFollowers = () => {
+    if (viewFollowers === false) {
+      setViewFollowers(true);
+    } else {
+      setViewFollowers(false);
+    }
+  }
+
+  const handleViewFollowing = () => {
+    if (viewFollowing === false) {
+      setViewFollowing(true);
+    } else {
+      setViewFollowing(false);
+    }
   }
 
   const handleToggleReplies = (index) => {
@@ -144,6 +162,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
       </div>
       </header>
       <div className="feed-container">
+        {(viewFollowing === false) && (<div>
         <div className="profile__container">
           {/* Banner */}
           <div className="profile__background">
@@ -157,8 +176,8 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
           {/* Follower counts */}
           <div className="profile__stats">
             <div  className="profile__follow-stats">
-              <p><strong>123</strong> Following</p>
-              <p><strong>123</strong> Followers</p>
+              <p onClick={() => handleViewFollowing()}><strong>123</strong> Following</p>
+              <p onClick={() => handleViewFollowers()}><strong>123</strong> Followers</p>
             </div>
             {identifier !== viewProfileUsername && <div className="profile__follow-button">Follow</div>}
           </div>
@@ -255,6 +274,41 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
             </div>
             </div>)}
         </div> 
+        </div>)}
+        {viewFollowers === true && (
+          <div>
+            <button className="back" onClick={() => handleViewFollowers()}><i class='fa fa-arrow-left'></i>&emsp;Back</button>
+            <div className="follow-list__header">Followers</div>
+            <div className="follow-list__container">
+              <div className="follow-list__item">
+                <div className="follow-list__item-user">
+                  <div className="cinematica__profile-circle" onClick={() => alert('test')}></div>
+                  <div>
+                  <p className="post-author" onClick={() => alert('test')}>Username</p>
+                  </div>
+                </div>
+                <div className="profile__follow-button">Follow</div>
+              </div>
+            </div>
+          </div>
+        )}
+        {viewFollowing === true && (
+          <div>
+            <button className="back" onClick={() => handleViewFollowing()}><i class='fa fa-arrow-left'></i>&emsp;Back</button>
+            <div className="follow-list__header">Following</div>
+            <div className="follow-list__container">
+              <div className="follow-list__item">
+                <div className="follow-list__item-user">
+                  <div className="cinematica__profile-circle" onClick={() => alert('test')}></div>
+                  <div>
+                  <p className="post-author" onClick={() => alert('test')}>Username</p>
+                  </div>
+                </div>
+                <div className="profile__follow-button--followed">Following</div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

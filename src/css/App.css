@@ -219,7 +219,9 @@ input.searchBar {
 .post__controls, 
 .post__details, 
 .post__author-container, 
-.post-stats {
+.post-stats,
+.follow-list__item,
+.follow-list__item-user {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -253,7 +255,8 @@ input.searchBar {
   margin-left: 0.8rem;
 }
 
-.post__author-container div:last-child {
+.post__author-container div:last-child,
+.follow-list__item-user div:last-child {
   margin-left: 0.7rem;
 }
 
@@ -370,11 +373,20 @@ textarea.post__text {
   margin-right: 1rem;
 }
 
+.profile__follow-button, .profile__follow-button--followed {
+  font-weight: 600;
+  padding: 0.6rem 2rem;
+  border-radius: 10rem;
+}
+
 .profile__follow-button {
   background-color: var(--color-magenta);
   color: var(--color-light-grey);
-  padding: 0.6rem 2rem;
-  border-radius: 10rem;
+}
+
+.profile__follow-button--followed {
+  background-color: var(--color-grey-4);
+  color: var(--color-light-grey);
 }
 
 .profile__tabs {
@@ -385,4 +397,14 @@ textarea.post__text {
   padding: 0.7rem;
   font-weight: bold;
   color: var(--color-grey-3);
+}
+
+.follow-list__header {
+  font-size: 1.4rem;
+  font-weight: bold;
+  padding-bottom: 1.5rem;
+}
+
+.follow-list__item-user {
+
 }
