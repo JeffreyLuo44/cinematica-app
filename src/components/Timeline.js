@@ -169,16 +169,15 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
         {/* Create post */}
         {viewPost === false && <form className="form" onSubmit={handleSubmit}>
           <div>
-            <textarea className="post__text" placeholder="What's on your mind?" maxLength={280} value={createPostText} onChange={(e) => setCreatePostText(e.target.value)} required /><br/>
-            <br/>
-          <div>
-            <input type="text" className="searchBar search__timeline" value={searchTag} placeholder="Enter tag..." onChange={(e) => setSearchTag(e.target.value)} /><br/>
-          </div>
+            <textarea className="post__text" placeholder="What's on your mind?" maxLength={280} value={createPostText} onChange={(e) => setCreatePostText(e.target.value)} required />
+            <div>
+              <input type="text" className="searchBar search__timeline" value={searchTag} placeholder="Enter tag..." onChange={(e) => setSearchTag(e.target.value)} /><br/>
+            </div>
           </div>
           <div className="post__controls">
             <div>
               <i class='fa fa-image'></i>
-              <label for="spoilers">Mark as having spoilers</label>
+              <label for="spoilers">Mark as spoilers</label>
               <input type="checkbox" value="spoilers" onChange={(e) => setIsCreateSpoilerPost(!isCreateSpoilerPost)} />
             </div>
             <div>
@@ -243,7 +242,7 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
               <br/>
               {/* Create reply */}
               <div className="comment-box__container">
-                <input type="text" className="comment-box__text" value={createReplyText} maxLength={280} placeholder="Write your Replies..." onChange={(e) => setCreateReplyText(e.target.value)} required />
+                <input type="text" className="comment-box__text" value={createReplyText} maxLength={280} placeholder="Write your reply..." onChange={(e) => setCreateReplyText(e.target.value)} required />
                 <i class='fa fa-send' onClick={() => handleAddReply()}></i>
               </div>
               <div>

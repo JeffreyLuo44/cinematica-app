@@ -246,7 +246,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
               <br/>
               {/* Create reply */}
               <div className="comment-box__container">
-                <input type="text" className="comment-box__text" value={createReplyText} maxLength={280} placeholder="Write your Replies..." onChange={(e) => setCreateReplyText(e.target.value)} required />
+                <input type="text" className="comment-box__text" value={createReplyText} maxLength={280} placeholder="Write your reply..." onChange={(e) => setCreateReplyText(e.target.value)} required />
                 <i class='fa fa-send' onClick={() => handleAddReply()}></i>
               </div>
               <div>
