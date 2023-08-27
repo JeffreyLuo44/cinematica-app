@@ -276,6 +276,10 @@ input.searchBar {
 
 header {
   position: sticky;
+  top: 0;
+  padding-bottom: 1rem;
+  background-color: white;
+  z-index: 99;
 }
 
 textarea.post__text {
