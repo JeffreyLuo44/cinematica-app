@@ -315,7 +315,10 @@ textarea.post__text {
 }
 
 .post-image {
-  max-width: 100%;
+  display: block; 
+  margin: 0 auto; /* Center-align horizontally using margin */
+  max-width: 100%; /* Ensure the image doesn't exceed its container */
+  max-height: 320px;
 }
 
 .profile__container, .mock-post {
@@ -410,4 +413,24 @@ textarea.post__text {
 
 .follow-list__item-user {
 
+}
+
+.image-preview-container {
+  position: relative;
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 320px;
+}
+
+.image-trash-icon {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: var(--color-grey);
+  color: var(--color-red);
+  padding: 0.3rem 0.5rem;
+  border-radius: 50%;
+  margin-top: 2rem;
 }

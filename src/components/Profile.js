@@ -199,7 +199,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
                     <p className="post-movie"><i class='fa fa-film'></i> {post[4]}</p>
                     <div className="post-stats">
                         <div className="post-likes"><i class='	fa fa-heart-o'></i> {post[5]}</div>
-                        <div className="post-comments" onClick={() => handleToggleReplies(index)}>{post[6]} Replies</div>
+                        <div className="post-comments" onClick={() => handleToggleReplies(index)}>{mockReplies[index].length} Replies</div>
                     </div>
                 </div>
             ))}
@@ -224,7 +224,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
                 <p className="post-movie"><i class='fa fa-film'></i> {selectedPost[4]}</p>
                 <div className="post-stats">
                     <div className="post-likes"><i class='	fa fa-heart-o'></i> {selectedPost[5]}</div>
-                    <div className="post-comments" onClick={() => handleToggleReplies("none")}>{selectedPost[6]} Replies</div>
+                    <div className="post-comments" onClick={() => handleToggleReplies("none")}>{mockReplies[selectedPostIndex].length} Replies</div>
                 </div>
               </div>
               <br/>

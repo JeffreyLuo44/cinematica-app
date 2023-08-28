@@ -20,10 +20,11 @@ function App() {
 
   useEffect(() => {
     // Eventually need to add spoiler field
+    // Like and reply count fields are placeholders for now
     setMockPosts([[otherMockUser, '18/8/23 7:56am', 'Just watched #Oppenheimer and I’m blown away by the brilliant performance of Cillian Murphy and the stunning cinematography of Hoyte van Hoytema. Nolan has done it again, delivering a masterpiece that explores the moral dilemmas and personal struggles of the man behind the atomic bomb. A must-watch for all film lovers! 🎥👏👏👏',
-    '', 'Oppenheimer (2023)', '657', '1,026', "hideTrashIcon", false],
+    '', 'Oppenheimer (2023)', '657', '', "hideTrashIcon", false],
     [mockUser,'16/8/23 9:43pm', 'The visuals of Spider-Man: Across the Spider-Verse is simply GOREGOUS! #loveit',
-    'spidermans.jpg', 'Spider-Man: Across the Spider-Verse (2023)', '238', '432', "hideTrashIcon", true]]);
+    'spidermans.jpg', 'Spider-Man: Across the Spider-Verse (2023)', '238', '', "hideTrashIcon", true]]);
     setMockReplies([[[mockUser, '20/8/23 9:43pm', 'I agree! I don’t usually watch other genres, but this one is a must-watch!', '238', "hideTrashIcon"],
     [otherMockUser2, '19/8/23 5:21pm', 'Thanks for the recommendation! I just left the cinema and WOW! That was AMAZING!', '552', "hideTrashIcon"]],[]]);
     // handleGetPosts();

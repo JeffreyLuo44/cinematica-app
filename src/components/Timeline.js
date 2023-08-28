@@ -6,6 +6,8 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
 
   const [createPostText, setCreatePostText] = useState('');
   const [searchTag, setSearchTag] = useState('');
+  const [showImageTrashIcon, setShowImageTrashIcon] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
   const [isCreateSpoilerPost, setIsCreateSpoilerPost] = useState(false);
 
   const [selectedPost, setSelectedPost] = useState([]);
@@ -20,9 +22,15 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
       return;
     }
     console.log("Post!");
+
+    let imageUrl = '';
+    if (imageFile) {
+      imageUrl = URL.createObjectURL(imageFile);
+    }
+
     // Mock post creation
     const updatedMockPosts = [...mockPosts];
-    let newPost = [identifier, getFormattedDateTime(), createPostText, '', 'No movie(s) tagged', 0, 0, "hideTrashIcon", isCreateSpoilerPost];
+    let newPost = [identifier, getFormattedDateTime(), createPostText, imageUrl, 'No movie(s) tagged', 0, 0, "hideTrashIcon", isCreateSpoilerPost];
     updatedMockPosts.unshift(newPost);
     const updatedMockReplies = [...mockReplies];
     updatedMockReplies.unshift([]);
@@ -32,6 +40,7 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
     // fetch('http://localhost:3001/post', {
     setCreatePostText('');
     setSearchTag('');
+    setImageFile(null);
     setIsCreateSpoilerPost(false);
   };
 
@@ -133,6 +142,17 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
     setMockPosts(restorePosts);
   }
 
+  // Simulate a click to find an image
+  const handleImageIconClick = () => {
+    const imageInput = document.getElementById('imageInput');
+    imageInput.click();
+  };
+
+  const handleImageUpload = (e) => {
+    const selectedImageFile = e.target.files[0];
+    setImageFile(selectedImageFile);
+  };
+
   return (
     <div className="cinematica__content">
       {/* Header */}
@@ -174,9 +194,16 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
               <input type="text" className="searchBar search__timeline" value={searchTag} placeholder="Enter tag..." onChange={(e) => setSearchTag(e.target.value)} /><br/>
             </div>
           </div>
+          {/* Display image preview */}
+          {imageFile && <div className="image-preview-container" onMouseEnter={() => setShowImageTrashIcon(true)} onMouseLeave={() => setShowImageTrashIcon(false)}>
+            {showImageTrashIcon === true && <div className="image-trash-icon"><i class="fa fa-trash" aria-hidden="true" onClick={() => setImageFile(null)}></i></div>}
+            <div className="image-preview-wrapper"><br/><img src={URL.createObjectURL(imageFile)} alt="Selected" className="image-preview" /></div>
+          </div>}
           <div className="post__controls">
             <div>
-              <i class='fa fa-image'></i>
+            {/* Hide default "browse" control */}
+            <input type="file" accept="image/*" id="imageInput" style={{ display: 'none' }} onChange={handleImageUpload} />
+            <i className='fa fa-image' onClick={handleImageIconClick}></i>
               <label for="spoilers">Mark as spoilers</label>
               <input type="checkbox" value="spoilers" onChange={(e) => setIsCreateSpoilerPost(!isCreateSpoilerPost)} />
             </div>
@@ -211,7 +238,7 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
                     <p className="post-movie"><i class='fa fa-film'></i> {post[4]}</p>
                     <div className="post-stats">
                         <div className="post-likes"><i class='	fa fa-heart-o'></i> {post[5]}</div>
-                        <div className="post-comments" onClick={() => handleToggleReplies(index)}>{post[6]} Replies</div>
+                        <div className="post-comments" onClick={() => handleToggleReplies(index)}>{mockReplies[index].length} Replies</div>
                     </div>
                 </div>
             ))}
@@ -236,7 +263,7 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
                 <p className="post-movie"><i class='fa fa-film'></i> {selectedPost[4]}</p>
                 <div className="post-stats">
                     <div className="post-likes"><i class='	fa fa-heart-o'></i> {selectedPost[5]}</div>
-                    <div className="post-comments" onClick={() => handleToggleReplies("none")}>{selectedPost[6]} Replies</div>
+                    <div className="post-comments" onClick={() => handleToggleReplies("none")}>{mockReplies[selectedPostIndex].length} Replies</div>
                 </div>
               </div>
               <br/>
