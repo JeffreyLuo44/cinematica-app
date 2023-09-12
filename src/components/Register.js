@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 
-const Register = ({setPage, setIdentifier}) => {
-  const [registerStage, setRegisterStage] = useState('1');
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
+const Register = ({setPage, email, setEmail, username, setUsername}) => {
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
@@ -22,21 +19,40 @@ const Register = ({setPage, setIdentifier}) => {
 
     if (errors.length > 0){
       for (var i = 0; i < errors.length; i++)
-        console.log(errors[i]);
+        alert(errors[i]);
     } else {
       console.log("Register!");
       // Send register data to server
-      // fetch('http://localhost:3001/register', {
-      setIdentifier(email);
-      setPage("verifyRegistration");
+      fetch('https://localhost:53134/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          Email: email,
+          Username: username,
+          Password: password
+        })
+      })
+      .then(response => {
+        if (response.ok) { // Check if the response status code is in the 2xx range
+          setPage("verifyRegistration");
+        } else {
+          return response.json().then(data => {
+            console.error('Request failed with status: ' + response.status);
+            alert(data.message);
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error during registration:', error);
+      });
     }
   };
 
   return (
     <div>
-      <header>  
-
-      </header>
+      {/* <header>  </header> */}
       <div className="container">
         <div className="left-column">
           <div className="register__background">
@@ -48,9 +64,6 @@ const Register = ({setPage, setIdentifier}) => {
           </div>
         </div>
         <div className="right-column">
-        {registerStage === "1" && (<button className="back" id="invisible-back"><i class='fa fa-arrow-left'></i>&emsp;Invisible back to keep alignment</button>)}
-        {registerStage === "2" && (<button className="back" onClick={() => setRegisterStage("1")}><i class='fa fa-arrow-left'></i>&emsp;Back</button>)}
-        {registerStage === "3" && (<button className="back" onClick={() => setRegisterStage("2")}><i class='fa fa-arrow-left'></i>&emsp;Back</button>)}
           <h1 className="formHeading">Register</h1>
           <form className="form" onSubmit={handleSubmit}>
             <label>Username</label><br/>

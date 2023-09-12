@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import MovieDetails from './MovieDetails';
 
-const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, mockPosts, setMockPosts, mockReplies, setMockReplies}) => {  
+const Timeline = ({setPage, username, setUsername, setViewProfileUsername, mockPosts, setMockPosts, mockReplies, setMockReplies}) => {  
   const [notificationOn, setNotificationOn] = useState(true);
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const [createPostText, setCreatePostText] = useState('');
   const [searchTag, setSearchTag] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const [showImageTrashIcon, setShowImageTrashIcon] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [isCreateSpoilerPost, setIsCreateSpoilerPost] = useState(false);
@@ -15,9 +17,21 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
   const [viewPost, setViewPost] = useState(false);
   const [createReplyText, setCreateReplyText] = useState("");
 
+  const [moviesTaggedCreatePost, setMoviesTaggedCreatePost] = useState([]);
+  const [movieId, setMovieId] = useState(-1);
+
+  const handleToggleMovieDetails = (id) => {
+    console.log(id);
+    if (movieId === -1){
+      setMovieId(id);
+    } else {
+      setMovieId(-1);
+    }
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (identifier === ''){
+    if (username === ''){
       alert("You must be signed in to create a post");
       return;
     }
@@ -30,7 +44,9 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
 
     // Mock post creation
     const updatedMockPosts = [...mockPosts];
-    let newPost = [identifier, getFormattedDateTime(), createPostText, imageUrl, 'No movie(s) tagged', 0, 0, "hideTrashIcon", isCreateSpoilerPost];
+    // This NEEDS changing
+    let mockTaggedMovie = moviesTaggedCreatePost[0].title + " (" + moviesTaggedCreatePost[0].releaseYear + ")";
+    let newPost = [username, getFormattedDateTime(), createPostText, imageUrl, mockTaggedMovie, 0, 0, "hideTrashIcon", isCreateSpoilerPost];
     updatedMockPosts.unshift(newPost);
     const updatedMockReplies = [...mockReplies];
     updatedMockReplies.unshift([]);
@@ -40,12 +56,13 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
     // fetch('http://localhost:3001/post', {
     setCreatePostText('');
     setSearchTag('');
+    setMoviesTaggedCreatePost([]);
     setImageFile(null);
     setIsCreateSpoilerPost(false);
   };
 
   const handleLogout = () => {
-    setIdentifier('');
+    setUsername('');
     setPage('login');
   }
 
@@ -113,12 +130,12 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
   }
 
   const handleAddReply = () => {
-    if (identifier === ''){
+    if (username === ''){
       alert("You must be signed in to create a reply");
       return;
     }
     const updatedMockReplies = [...mockReplies];
-    let newReply = [identifier, getFormattedDateTime(), createReplyText, 0, "hideTrashIcon"];
+    let newReply = [username, getFormattedDateTime(), createReplyText, 0, "hideTrashIcon"];
     updatedMockReplies[selectedPostIndex].unshift(newReply);
     setMockReplies(updatedMockReplies);
     setCreateReplyText('');
@@ -153,21 +170,71 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
     setImageFile(selectedImageFile);
   };
 
+  // Using the Movie Search API
+  const searchMovie = (searchTag) => {
+    if (searchTag === ""){
+      setSearchResults([]);
+      //To get rid of the small empty search result
+      document.getElementById("search-results").style.visibility = "hidden";
+      return;
+    }
+    document.getElementById("search-results").style.visibility = "visible";
+
+    try {
+      // Send movie id to server
+      fetch('https://localhost:53134/api/movies/search/' + searchTag, {
+        method: 'GET',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    })
+    .then(response => {
+        if (response.ok) { // Check if the response status code is in the 2xx range
+            return response.json().then(data => {
+                setSearchResults(data);
+            });
+        } else {
+            alert(response.title);
+        }
+    });
+    } catch (error) {
+      console.error('Error getting movie search results:', error);
+    }
+  }
+  
+  const handleAddTaggedMovie = (id, title, releaseYear) => {
+    let updatedMoviesTaggedCreatePost = [...moviesTaggedCreatePost];
+    let newMovieTagged = {
+      id: id,
+      title: title,
+      releaseYear: releaseYear
+    }
+    updatedMoviesTaggedCreatePost.push(newMovieTagged);
+    setMoviesTaggedCreatePost(updatedMoviesTaggedCreatePost);
+    // Reset the search bar and results
+    setSearchTag("");
+    document.getElementById("search-results").style.visibility = "hidden";
+  }
+
+  const handleViewTimeline = () => {
+    setMovieId(-1);
+  }
+
   return (
     <div className="cinematica__content">
       {/* Header */}
       <header>
         <div className="cinematica__header-upper">
-          <p className="cinematica__logo logo__size-2 logo__colour-2" onClick={() => setPage("timeline")}>Cinematica</p>
+          <p className="cinematica__logo logo__size-2 logo__colour-2" onClick={() => handleViewTimeline()}>Cinematica</p>
           <div>
-            <i class="fa fa-home" aria-hidden="true" onClick={() => setPage("timeline")}></i>
-            {identifier !== "" ? <div>
+            <i class="fa fa-home" aria-hidden="true" onClick={() => handleViewTimeline()}></i>
+            {username !== "" ? <div>
               {notificationOn ? <i class='fa fa-bell' onClick={() => handleToggleNotifications()}></i> : <i class='fa fa-bell-slash' onClick={() => handleToggleNotifications()}></i>}
-              <p onClick={() => handleViewProfile(identifier)}>{identifier}</p>
+              <p onClick={() => handleViewProfile(username)}>{username}</p>
               <div className="cinematica__profile-circle" onClick={() => setDropdownVisible(!dropdownVisible)}></div>
               {dropdownVisible && (
               <div className="dropdown-menu">
-                <p onClick={() => handleViewProfile(identifier)}>Profile</p>
+                <p onClick={() => handleViewProfile(username)}>Profile</p>
                 <i class="fa fa-sign-out" aria-hidden="true" onClick={handleLogout}></i>
               </div>
               )}
@@ -185,13 +252,26 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
           <div onClick={() => alert('test')}>Following</div>
         </div>
       </header>
-      <div className="feed-container">
+      {movieId >= 0 ? (<MovieDetails movieId={movieId} handleToggleMovieDetails={handleToggleMovieDetails} />) :
+      (<div className="feed-container">
         {/* Create post */}
         {viewPost === false && <form className="form" onSubmit={handleSubmit}>
           <div>
             <textarea className="post__text" placeholder="What's on your mind?" maxLength={280} value={createPostText} onChange={(e) => setCreatePostText(e.target.value)} required />
             <div>
-              <input type="text" className="searchBar search__timeline" value={searchTag} placeholder="Enter tag..." onChange={(e) => setSearchTag(e.target.value)} /><br/>
+              <input type="text" className="searchBar search__timeline" value={searchTag} placeholder="Enter tag..." onChange={(e) => {setSearchTag(e.target.value); searchMovie(e.target.value);}} /><br/>
+            </div>
+            <div id="search-results" className="search-results">
+              {/* Display search results here */}
+              {searchResults.map((result) => (
+                <div key={result.id} onClick={() => handleAddTaggedMovie(result.id, result.title, result.releaseYear)}>{result.title} ({result.releaseYear})</div>
+              ))}
+            </div>
+            {moviesTaggedCreatePost.length > 0 && <br/>}
+            <div className="post-movie">
+              {moviesTaggedCreatePost.map((taggedMovie) => (
+                <div key={taggedMovie.id} onClick={() => handleToggleMovieDetails(taggedMovie.id)}><i class='fa fa-film'></i> {taggedMovie.title} ({taggedMovie.releaseYear})</div>
+              ))}
             </div>
           </div>
           {/* Display image preview */}
@@ -232,10 +312,10 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
                           <p className="post-date">{post[1]}</p>
                         </div>
                     </div>
-                    {post[0] === identifier && <div className={post[7]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
-                    {post[8] === false || post[0] === identifier ? <p className="post-content">{post[2]}</p> : <p className="post-content" onClick={() => handleTempRemoveSpoilerMessage(index)}>Warning: Potential spoilers! Click this text or "Replies" to reveal...</p>}
-                    {post[3] !== '' && (post[8] === false || post[0] === identifier) && <img src={post[3]} alt={`Post ${index}`} className="post-image" />}
-                    <p className="post-movie"><i class='fa fa-film'></i> {post[4]}</p>
+                    {post[0] === username && <div className={post[7]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
+                    {post[8] === false || post[0] === username ? <p className="post-content">{post[2]}</p> : <p className="post-content" onClick={() => handleTempRemoveSpoilerMessage(index)}>Warning: Potential spoilers! Click this text or "Replies" to reveal...</p>}
+                    {post[3] !== '' && (post[8] === false || post[0] === username) && <img src={post[3]} alt={`Post ${index}`} className="post-image" />}
+                    <p className="post-movie" onClick={() => handleToggleMovieDetails(post[9])}><i class='fa fa-film'></i> {post[4]}</p>
                     <div className="post-stats">
                         <div className="post-likes"><i class='	fa fa-heart-o'></i> {post[5]}</div>
                         <div className="post-comments" onClick={() => handleToggleReplies(index)}>{mockReplies[index].length} Replies</div>
@@ -257,10 +337,10 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
                       <p className="post-date">{selectedPost[1]}</p>
                     </div>
                 </div>
-                {selectedPost[0] === identifier && <div className={selectedPost[7]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
+                {selectedPost[0] === username && <div className={selectedPost[7]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
                 <p className="post-content">{selectedPost[2]}</p>
                 {selectedPost[3] !== '' && <img src={selectedPost[3]} alt={`Post`} className="post-image" />}
-                <p className="post-movie"><i class='fa fa-film'></i> {selectedPost[4]}</p>
+                <p className="post-movie" onClick={() => handleToggleMovieDetails(selectedPost[9])}><i class='fa fa-film'></i> {selectedPost[4]}</p>
                 <div className="post-stats">
                     <div className="post-likes"><i class='	fa fa-heart-o'></i> {selectedPost[5]}</div>
                     <div className="post-comments" onClick={() => handleToggleReplies("none")}>{mockReplies[selectedPostIndex].length} Replies</div>
@@ -287,7 +367,7 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
                           <p className="post-date">{replies[1]}</p>
                         </div>
                     </div>
-                    {replies[0] === identifier && <div className={replies[4]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
+                    {replies[0] === username && <div className={replies[4]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
                     <p className="post-content">{replies[2]}</p>
                     <div className="post-stats">
                         <div className="post-likes"><i class='	fa fa-heart-o'></i> {replies[3]}</div>
@@ -297,7 +377,7 @@ const Timeline = ({setPage, identifier, setIdentifier, setViewProfileUsername, m
             </div>
           </div>)}
         </div> 
-      </div>
+      </div>)}
     </div>
   );
 };

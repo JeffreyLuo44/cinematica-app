@@ -9,8 +9,26 @@ const ResetPassword = ({setPage}) => {
   const handleNavToStage2 = (e) => {
     e.preventDefault();
     // Send email data to server
-    // fetch('http://localhost:3001/checkEmail', {
-    setResetStage("2");
+    fetch('https://localhost:53134/api/auth/request-password-reset', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(email)
+    })
+    .then(response => {
+      if (response.ok) { // Check if the response status code is in the 2xx range
+        setResetStage("2");
+      } else {
+        return response.json().then(data => {
+          console.error('Request failed with status: ' + response.status);
+          alert(data.message);
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error during request password reset :', error);
+    });
   }
 
   const handleSubmit = (e) => {
@@ -25,12 +43,35 @@ const ResetPassword = ({setPage}) => {
 
     if (errors.length > 0){
       for (var i = 0; i < errors.length; i++)
-        console.log(errors[i]);
+        alert(errors[i]);
     } else {
         console.log("Password reset!");
         // Send password reset data to server
-        // fetch('http://localhost:3001/resetPassword', {
-        setPage("login");
+        fetch('https://localhost:53134/api/auth/reset-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            Email: email,
+            Password: newPassword,
+            ConfirmationCode: token,
+          })
+        })
+        .then(response => {
+          if (response.ok) { // Check if the response status code is in the 2xx range
+            setPage("login");
+            alert("Password has been reset.");
+          } else {
+            return response.json().then(data => {
+              console.error('Request failed with status: ' + response.status);
+              alert(data.message);
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error during reset password:', error);
+        });
     }
   };
 

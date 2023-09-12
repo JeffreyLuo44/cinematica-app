@@ -1,25 +1,41 @@
 import React, { useState } from 'react';
 
-const Login = ({setPage, identifier, setIdentifier}) => {
+const Login = ({setPage, username, setUsername}) => {
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Login!");
     // Send login data to server
-    // fetch('http://localhost:3001/login', {
-    //Change later
-    // setIdentifier("ThatMovieAddict");
-    setIdentifier("ThatMovieAddict");
-    setPage("timeline");
-
+    fetch('https://localhost:53134/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        Username: username,
+        Password: password
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.idToken !== undefined) {
+        setPage("timeline");
+      } else if (data.message === "User hasn't been verified yet.") {
+        setPage("verifyRegistration");
+        alert(data.message);
+      } else {
+        alert(data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error during login:', error);
+    });
   };
 
   return (
     <div>
-      <header>  
-
-      </header>
+      {/* <header>  </header> */}
       <div className="container">
         <div className="left-column">
           <div className="login__background">
@@ -34,8 +50,8 @@ const Login = ({setPage, identifier, setIdentifier}) => {
           <button className="back" id="invisible-back"><i class='fa fa-arrow-left'></i>&emsp;Invisible back to keep alignment</button>
           <h1 className="formHeading">Login</h1>
           <form className="form" onSubmit={handleSubmit}>
-            <label>Username or Email Address</label><br/>
-            <input type="text" value={identifier.trim()} onChange={(e) => setIdentifier(e.target.value)} required/><br/>
+            <label>Username</label><br/>
+            <input type="text" value={username.trim()} onChange={(e) => setUsername(e.target.value)} required/><br/>
             <br/>
             <label id="login-password">Password</label> <span className="link" onClick={() => setPage("passwordReset")}>Forgot Password</span><br/>
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}  placeholder="" autoComplete="new-password" required /> <br/>

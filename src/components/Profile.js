@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import MovieDetails from './MovieDetails';
 
-const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setViewProfileUsername, mockPosts, setMockPosts, mockReplies, setMockReplies}) => {
+const Profile = ({setPage, username, setUsername, viewProfileUsername, setViewProfileUsername, mockPosts, setMockPosts, mockReplies, setMockReplies}) => {
   const [notificationOn, setNotificationOn] = useState(true);
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
@@ -11,15 +12,23 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
   const [viewFollowers, setViewFollowers] = useState(false);
   const [viewFollowing, setViewFollowing] = useState(false);
 
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     console.log("Post!");
-//     // Send post data to server
-//     // fetch('http://localhost:3001/post', {
-//   };
-
+  const [movieId, setMovieId] = useState(-1);
+  const handleToggleMovieDetails = (id) => {
+    if (movieId === -1){
+      setMovieId(id);
+    } else {
+      setMovieId(-1);
+    }
+  }
+//  const user = {
+//   id: 0,
+//   profile_picture: "[insert URL here]",
+//   cover_picture: "[insert URL here]",
+//   follower_count: 123,
+//   following_count: 123,
+//  }
   const handleLogout = () => {
-    setIdentifier('');
+    setUsername('');
     setPage('login');
   }
 
@@ -30,6 +39,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
   }
 
   const handleViewTimeline = () => {
+    setMovieId(-1);
     setViewProfileUsername('');
     setPage("timeline");
   }
@@ -93,7 +103,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
 
   const handleAddReply = () => {
     const updatedMockReplies = [...mockReplies];
-    let newReply = [identifier, getFormattedDateTime(), createReplyText, 0, "hideTrashIcon"];
+    let newReply = [username, getFormattedDateTime(), createReplyText, 0, "hideTrashIcon"];
     updatedMockReplies[selectedPostIndex].unshift(newReply);
     setMockReplies(updatedMockReplies);
     setCreateReplyText('');
@@ -117,6 +127,14 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
     setMockPosts(restorePosts);
   }
 
+  const handleFollowUser = () => {
+
+  }
+
+  // const handleUnfollowUser = () => {
+
+  // }
+
   return (
     <div className="cinematica__content">
       {/* Header */}
@@ -125,9 +143,9 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
           <p className="cinematica__logo logo__size-2 logo__colour-2" onClick={() => handleViewTimeline()}>Cinematica</p>
           <div>
             <i class="fa fa-home" aria-hidden="true" onClick={() => handleViewTimeline()}></i>
-            {identifier !== "" ? <div>
+            {username !== "" ? <div>
               {notificationOn ? <i class='fa fa-bell' onClick={() => handleToggleNotifications()}></i> : <i class='fa fa-bell-slash' onClick={() => handleToggleNotifications()}></i>}
-              <p onClick={() => handleViewProfile(identifier)}>{identifier}</p>
+              <p onClick={() => handleViewProfile(username)}>{username}</p>
               <div className="cinematica__profile-circle" onClick={() => setDropdownVisible(!dropdownVisible)}></div>
               {dropdownVisible && (
               <div className="dropdown-menu">
@@ -145,12 +163,13 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
         <div>
       </div>
       </header>
-      <div className="feed-container">
+      {movieId >= 0 ? (<MovieDetails movieId={movieId} handleToggleMovieDetails={handleToggleMovieDetails} />) :
+      (<div className="feed-container">
         {(viewFollowing === false && viewFollowers === false) && (<div>
         <div className="profile__container">
           {/* Banner */}
           <div className="profile__background">
-            {identifier === viewProfileUsername && <i class='fa fa-edit'></i>}
+            {username === viewProfileUsername && <i class='fa fa-edit'></i>}
           </div>
           {/* Profile picture and username */}
           <div className="profile__name-photo-container">
@@ -163,7 +182,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
               <p onClick={() => setViewFollowing(true)}><strong>123</strong> Following</p>
               <p onClick={() => setViewFollowers(true)}><strong>123</strong> Followers</p>
             </div>
-            {identifier !== viewProfileUsername && <div className="profile__follow-button">Follow</div>}
+            {username !== viewProfileUsername && <div className="profile__follow-button" onClick={() => handleFollowUser(username)}>Follow</div>}
           </div>
           {/* Profile tabs */}
           <div className="profile__tabs">
@@ -193,10 +212,10 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
                           <p className="post-date">{post[1]}</p>
                         </div>
                     </div>
-                    {post[0] === identifier && <div className={post[7]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
-                    {post[8] === false || post[0] === identifier ? <p className="post-content">{post[2]}</p> : <p className="post-content" onClick={() => handleTempRemoveSpoilerMessage(index)}>Warning: Potential spoilers! Click this text or "Replies" to reveal...</p>}
-                    {post[3] !== '' && (post[8] === false || post[0] === identifier) && <img src={post[3]} alt={`Post ${index}`} className="post-image" />}
-                    <p className="post-movie"><i class='fa fa-film'></i> {post[4]}</p>
+                    {post[0] === username && <div className={post[7]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
+                    {post[8] === false || post[0] === username ? <p className="post-content">{post[2]}</p> : <p className="post-content" onClick={() => handleTempRemoveSpoilerMessage(index)}>Warning: Potential spoilers! Click this text or "Replies" to reveal...</p>}
+                    {post[3] !== '' && (post[8] === false || post[0] === username) && <img src={post[3]} alt={`Post ${index}`} className="post-image" />}
+                    <p className="post-movie" onClick={() => handleToggleMovieDetails(post[9])}><i class='fa fa-film'></i> {post[4]}</p>
                     <div className="post-stats">
                         <div className="post-likes"><i class='	fa fa-heart-o'></i> {post[5]}</div>
                         <div className="post-comments" onClick={() => handleToggleReplies(index)}>{mockReplies[index].length} Replies</div>
@@ -218,10 +237,10 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
                       <p className="post-date">{selectedPost[1]}</p>
                     </div>
                 </div>
-                {selectedPost[0] === identifier && <div className={selectedPost[7]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
+                {selectedPost[0] === username && <div className={selectedPost[7]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
                 <p className="post-content">{selectedPost[2]}</p>
                 {selectedPost[3] !== '' && <img src={selectedPost[3]} alt={`Post`} className="post-image" />}
-                <p className="post-movie"><i class='fa fa-film'></i> {selectedPost[4]}</p>
+                <p className="post-movie" onClick={() => handleToggleMovieDetails(selectedPost[9])}><i class='fa fa-film'></i> {selectedPost[4]}</p>
                 <div className="post-stats">
                     <div className="post-likes"><i class='	fa fa-heart-o'></i> {selectedPost[5]}</div>
                     <div className="post-comments" onClick={() => handleToggleReplies("none")}>{mockReplies[selectedPostIndex].length} Replies</div>
@@ -248,7 +267,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
                         <p className="post-date">{replies[1]}</p>
                         </div>
                     </div>
-                    {replies[0] === identifier && <div className={replies[4]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
+                    {replies[0] === username && <div className={replies[4]}><i class="fa fa-trash" aria-hidden="true"></i></div>}
                     <p className="post-content">{replies[2]}</p>
                     <div className="post-stats">
                         <div className="post-likes"><i class='	fa fa-heart-o'></i> {replies[3]}</div>
@@ -293,7 +312,7 @@ const Profile = ({setPage, identifier, setIdentifier, viewProfileUsername, setVi
           </div>
         </div>
       )}
-      </div>
+      </div>)}
     </div>
   );
 };

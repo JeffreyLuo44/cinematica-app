@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const VerifyRegistration = ({setPage, setIdentifier}) => {
+const VerifyRegistration = ({setPage, email, username, setUsername}) => {
   const [otpEntry1, setOTPEntry1] = useState('');
   const [otpEntry2, setOTPEntry2] = useState('');
   const [otpEntry3, setOTPEntry3] = useState('');
@@ -12,9 +12,48 @@ const VerifyRegistration = ({setPage, setIdentifier}) => {
     e.preventDefault();
     console.log("OTP: " + otpEntry1 + otpEntry2 + otpEntry3 + otpEntry4 + otpEntry5 + otpEntry6);
     // Send OTP data to server
-    // fetch('http://localhost:3001/verifyOTP', {
-    setPage("timeline");
+    fetch('https://localhost:53134/api/auth/confirm-registration', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        Username: username,
+        ConfirmationCode: otpEntry1 + otpEntry2 + otpEntry3 + otpEntry4 + otpEntry5 + otpEntry6,
+      })
+    })
+    .then(response => {
+      if (response.ok) { // Check if the response status code is in the 2xx range
+        setPage("timeline");
+      } else {
+        return response.json().then(data => {
+          console.error('Request failed with status: ' + response.status);
+          alert(data.message);
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error during confirmation:', error);
+    });
   };
+
+  const handleResendOTP = () => {
+    // Send OTP data to server
+    fetch('https://localhost:53134/api/auth/resend-confirmation-code', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(email)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+    })
+    .catch(error => {
+      console.error('Error during resend:', error);
+    });
+  }
 
   const handleInput1Change = (e) => {
     setOTPEntry1(e.target.value);
@@ -61,15 +100,13 @@ const VerifyRegistration = ({setPage, setIdentifier}) => {
   }
 
   const handleLogout = () => {
-    setIdentifier('');
+    setUsername('');
     setPage('login');
   }
 
   return (
     <div>
-      <header>  
-
-      </header>
+      {/* <header>  </header> */}
       <div className="container">
         <div className="left-column">
            <div className="register__background">
@@ -93,7 +130,7 @@ const VerifyRegistration = ({setPage, setIdentifier}) => {
             <input type="text" className="otpEntry" id="otpEntry5" value={otpEntry5} maxLength={1} onChange={(e) => handleInput5Change(e)} required/>
             <input type="text" className="otpEntry" id="otpEntry6" value={otpEntry6} maxLength={1} onChange={(e) => handleInput6Change(e)} required/><br/>
             <br/>
-            <button className="standard" id="resend-button">Resend One Time Password</button>
+            <button className="standard" type="button" id="resend-button" onClick={() => handleResendOTP()}>Resend One Time Password</button>
             <br/>
             <button className="standard" type="submit">Verify and Login</button>
           </form>

@@ -9,9 +9,10 @@ import Profile from './Profile';
 
 function App() {
   const [page, setPage] = useState("timeline");
-  const [identifier, setIdentifier] = useState('');
+  const [username, setUsername] = useState('jeffrey');
+  const [email, setEmail] = useState('');
   const [viewProfileUsername, setViewProfileUsername] = useState('');
-
+  // const [userId, setUserId] = useState('');
   const [mockPosts, setMockPosts] = useState([]);
   const [mockReplies, setMockReplies] = useState("");
   const [mockUser] = useState("SpiderManFan");
@@ -21,10 +22,11 @@ function App() {
   useEffect(() => {
     // Eventually need to add spoiler field
     // Like and reply count fields are placeholders for now
+    // Movie id will be part of the post data 
     setMockPosts([[otherMockUser, '18/8/23 7:56am', 'Just watched #Oppenheimer and I’m blown away by the brilliant performance of Cillian Murphy and the stunning cinematography of Hoyte van Hoytema. Nolan has done it again, delivering a masterpiece that explores the moral dilemmas and personal struggles of the man behind the atomic bomb. A must-watch for all film lovers! 🎥👏👏👏',
-    '', 'Oppenheimer (2023)', '657', '', "hideTrashIcon", false],
+    '', 'Oppenheimer (2023)', '657', '', "hideTrashIcon", false, 872585],
     [mockUser,'16/8/23 9:43pm', 'The visuals of Spider-Man: Across the Spider-Verse is simply GOREGOUS! #loveit',
-    'spidermans.jpg', 'Spider-Man: Across the Spider-Verse (2023)', '238', '', "hideTrashIcon", true]]);
+    'spidermans.jpg', 'Spider-Man: Across the Spider-Verse (2023)', '238', '', "hideTrashIcon", true, 569094]]);
     setMockReplies([[[mockUser, '20/8/23 9:43pm', 'I agree! I don’t usually watch other genres, but this one is a must-watch!', '238', "hideTrashIcon"],
     [otherMockUser2, '19/8/23 5:21pm', 'Thanks for the recommendation! I just left the cinema and WOW! That was AMAZING!', '552', "hideTrashIcon"]],[]]);
     // handleGetPosts();
@@ -34,13 +36,13 @@ function App() {
 
   return (
     <div className="App">
-      {page==="login" && <Login setPage={setPage} identifier={identifier} setIdentifier={setIdentifier}/>}
-      {page==="register" && <Register setPage={setPage} setIdentifier={setIdentifier} />}
-      {page==="verifyRegistration" && <VerifyRegistration setPage={setPage} setIdentifier={setIdentifier}/>}
+      {page==="login" && <Login setPage={setPage} username={username} setUsername={setUsername}/>}
+      {page==="register" && <Register setPage={setPage} email={email} setEmail={setEmail} username={username} setUsername={setUsername} />}
+      {page==="verifyRegistration" && <VerifyRegistration setPage={setPage} email={email} username={username} setUsername={setUsername}/>}
       {page==="passwordReset" && <PasswordReset setPage={setPage}/>}
-      {page==="timeline" && <Timeline setPage={setPage} identifier={identifier} setIdentifier={setIdentifier} setViewProfileUsername={setViewProfileUsername}
+      {page==="timeline" && <Timeline setPage={setPage} username={username} setEmail={setEmail} setUsername={setUsername} setViewProfileUsername={setViewProfileUsername}
         mockPosts={mockPosts} setMockPosts={setMockPosts} mockReplies={mockReplies} setMockReplies={setMockReplies} mockUser={mockUser} otherMockUser={otherMockUser} otherMockUser2={otherMockUser2}/>}
-      {page==="profile" && <Profile setPage={setPage} identifier={identifier} setIdentifier={setIdentifier} viewProfileUsername={viewProfileUsername} setViewProfileUsername={setViewProfileUsername}
+      {page==="profile" && <Profile setPage={setPage} username={username} setUsername={setUsername} viewProfileUsername={viewProfileUsername} setViewProfileUsername={setViewProfileUsername}
         mockPosts={mockPosts} setMockPosts={setMockPosts} mockReplies={mockReplies} setMockReplies={setMockReplies} mockUser={mockUser} otherMockUser={otherMockUser} otherMockUser2={otherMockUser2}/>}
     </div>
   );
