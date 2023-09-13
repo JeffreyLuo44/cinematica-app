@@ -9,10 +9,9 @@ import Profile from './Profile';
 
 function App() {
   const [page, setPage] = useState("timeline");
+  const [userId, setUserId] = useState('a33c0775-1406-4cc3-81ec-16151ecc4ade');
   const [username, setUsername] = useState('jeffrey');
   const [email, setEmail] = useState('');
-  const [viewProfileUsername, setViewProfileUsername] = useState('');
-  // const [userId, setUserId] = useState('');
   const [mockPosts, setMockPosts] = useState([]);
   const [mockReplies, setMockReplies] = useState("");
   const [mockUser] = useState("SpiderManFan");
@@ -36,13 +35,13 @@ function App() {
 
   return (
     <div className="App">
-      {page==="login" && <Login setPage={setPage} username={username} setUsername={setUsername}/>}
-      {page==="register" && <Register setPage={setPage} email={email} setEmail={setEmail} username={username} setUsername={setUsername} />}
-      {page==="verifyRegistration" && <VerifyRegistration setPage={setPage} email={email} username={username} setUsername={setUsername}/>}
+      {page==="login" && <Login setPage={setPage}  userId={userId} setUserId={setUserId} username={username} setUsername={setUsername}/>}
+      {page==="register" && <Register setPage={setPage}  userId={userId} setUserId={setUserId} email={email} setEmail={setEmail} username={username} setUsername={setUsername} />}
+      {page==="verifyRegistration" && <VerifyRegistration setPage={setPage} userId={userId} setUserId={setUserId} email={email} username={username} setUsername={setUsername}/>}
       {page==="passwordReset" && <PasswordReset setPage={setPage}/>}
-      {page==="timeline" && <Timeline setPage={setPage} username={username} setEmail={setEmail} setUsername={setUsername} setViewProfileUsername={setViewProfileUsername}
+      {page==="timeline" && <Timeline setPage={setPage} userId={userId} setUserId={setUserId} username={username} setEmail={setEmail} setUsername={setUsername}
         mockPosts={mockPosts} setMockPosts={setMockPosts} mockReplies={mockReplies} setMockReplies={setMockReplies} mockUser={mockUser} otherMockUser={otherMockUser} otherMockUser2={otherMockUser2}/>}
-      {page==="profile" && <Profile setPage={setPage} username={username} setUsername={setUsername} viewProfileUsername={viewProfileUsername} setViewProfileUsername={setViewProfileUsername}
+      {page==="profile" && <Profile setPage={setPage} userId={userId} setUserId={setUserId} username={username} setUsername={setUsername}
         mockPosts={mockPosts} setMockPosts={setMockPosts} mockReplies={mockReplies} setMockReplies={setMockReplies} mockUser={mockUser} otherMockUser={otherMockUser} otherMockUser2={otherMockUser2}/>}
     </div>
   );

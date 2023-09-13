@@ -382,18 +382,26 @@ textarea.post__text {
   margin-right: 1rem;
 }
 
-.profile__follow-button, .profile__follow-button--followed {
+.profile__follow-button, .profile__follow-button--followed,
+.movie__subscribe-button, .movie__subscribe-button--followed {
   font-weight: 600;
   padding: 0.6rem 2rem;
   border-radius: 10rem;
 }
 
-.profile__follow-button {
+.movie__subscribe-button, .movie__subscribe-button--followed {
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.profile__follow-button,
+.movie__subscribe-button {
   background-color: var(--color-magenta);
   color: var(--color-light-grey);
 }
 
-.profile__follow-button--followed {
+.profile__follow-button--followed,
+.movie__subscribe-button--followed {
   background-color: var(--color-grey-4);
   color: var(--color-light-grey);
 }
@@ -447,6 +455,10 @@ textarea.post__text {
   position: relative;
 }
 
+.movie__heading-container div:last-child {
+  position: static;
+}
+
 .movie__heading-container .profile__tabs {
   border-radius: 0.7rem;
 }
@@ -473,6 +485,10 @@ textarea.post__text {
   height: 12rem;
   top: 5rem;
   right: 2.5rem;
+}
+
+.movie__main-details {
+  margin-right: 30%;
 }
 
 .movie__main-details p:first-child {
@@ -514,6 +530,11 @@ textarea.post__text {
   font-weight: 600;
 }
 
+.movie__details-item-container p:last-child {
+  margin-left: 0.5rem;
+  text-align: right;
+}
+
 .search-results {
   position: absolute;
   text-align: left;
@@ -522,8 +543,14 @@ textarea.post__text {
   margin-top: 0.5rem;
   border-radius: 0.5rem;
   visibility: hidden;
+  filter: drop-shadow(5px 5px 6px #00000035);
+  z-index: 99;
 }
 
 .post-movie {
   text-align: left;
+}
+
+.tab--clicked {
+  color: var(--color-blue);
 }
