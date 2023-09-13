@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import MovieDetails from './MovieDetails';
 import Posts from './Posts';
 
-const Timeline = ({setPage, userId, username, setUsername, mockPosts, setMockPosts, mockReplies, setMockReplies}) => {  
+const Timeline = ({setPage, userId, handleViewProfile, username, setUsername, mockPosts, setMockPosts, mockReplies, setMockReplies}) => {  
   const [notificationOn, setNotificationOn] = useState(true);
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
@@ -60,12 +60,6 @@ const Timeline = ({setPage, userId, username, setUsername, mockPosts, setMockPos
   const handleLogout = () => {
     setUsername('');
     setPage('login');
-  }
-
-  const handleViewProfile = (userId) => {
-    /* Need to get username so this needs to be changed */
-    // setViewProfileUserId(userId);
-    setPage("profile");
   }
 
   const handleToggleNotifications = () => {

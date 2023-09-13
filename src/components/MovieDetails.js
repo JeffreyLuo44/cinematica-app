@@ -7,7 +7,7 @@ const MovieDetails = ({userId, movieId, handleToggleMovieDetails}) => {
     const [movieDetails, setMovieDetails] = useState([]);
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [movieList, setMovieList] = useState([]);
-    // There will be a fetch request that gets the movie details by id.
+
     useEffect(() => {
     // Send movie id to server
     fetch('https://localhost:53134/api/movies/' + movieId, {
@@ -30,69 +30,75 @@ const MovieDetails = ({userId, movieId, handleToggleMovieDetails}) => {
     .catch(error => {
         console.error('Error during getting movie details', error);
     });
-    getMovieList();
+    if (userId !== '')
+        getMovieList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        checkIfSubscribedMovie();
+        if (userId !== '')
+            checkIfSubscribedMovie();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [movieDetails, movieList]);
 
     const handleAddMovie = () => {
-    // Send id data to server
-    fetch('https://localhost:53134/api/users/add-movie', {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-        userId: userId,
-        movieId: movieId,
-        })
-    })
-    .then(response => {
-        if (response.ok) { // Check if the response status code is in the 2xx range
-            getMovieList();
-            checkIfSubscribedMovie();
-        } else {
-        return response.json().then(data => {
-            console.error('Request failed with status: ' + response.status);
-            alert(data.message);
-        });
+        if (userId === ''){
+            alert("Sign in to subscribe!");
+            return;
         }
-    })
-    .catch(error => {
-        console.error('Error during reset password:', error);
-    });
+        // Send id data to server
+        fetch('https://localhost:53134/api/users/add-movie', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+            userId: userId,
+            movieId: movieId,
+            })
+        })
+        .then(response => {
+            if (response.ok) { // Check if the response status code is in the 2xx range
+                getMovieList();
+                checkIfSubscribedMovie();
+            } else {
+                return response.json().then(data => {
+                    console.error('Request failed with status: ' + response.status);
+                    alert(data.message);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error during reset password:', error);
+        });
     }
 
     const handleRemoveMovie = () => {
-    // Send id data to server
-    fetch('https://localhost:53134/api/users/remove-movie', {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-        userId: userId,
-        movieId: movieId,
+        // Send id data to server
+        fetch('https://localhost:53134/api/users/remove-movie', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+            userId: userId,
+            movieId: movieId,
+            })
         })
-    })
-    .then(response => {
-        if (response.ok) { // Check if the response status code is in the 2xx range
-            getMovieList();
-            checkIfSubscribedMovie();
-        } else {
-        return response.json().then(data => {
-            console.error('Request failed with status: ' + response.status);
-            alert(data.message);
+        .then(response => {
+            if (response.ok) { // Check if the response status code is in the 2xx range
+                getMovieList();
+                checkIfSubscribedMovie();
+            } else {
+                return response.json().then(data => {
+                    console.error('Request failed with status: ' + response.status);
+                    alert(data.message);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error during reset password:', error);
         });
-        }
-    })
-    .catch(error => {
-        console.error('Error during reset password:', error);
-    });
     }
 
     const getMovieList =() => {
@@ -117,7 +123,7 @@ const MovieDetails = ({userId, movieId, handleToggleMovieDetails}) => {
     }
 
     const checkIfSubscribedMovie = () => {
-        let isMovieIdInArray = movieList.some(movie => movie.movieId === movieId);
+        let isMovieIdInArray = movieList.some(movie => movie.id === movieId);
         setIsSubscribed(isMovieIdInArray);
     }
     
@@ -154,7 +160,7 @@ const MovieDetails = ({userId, movieId, handleToggleMovieDetails}) => {
                 </div>  
                 <div>
                     {isSubscribed === false ? <div className="movie__subscribe-button" onClick={() => handleAddMovie()}>Subscribe</div>: 
-                    <div className="movie__subscribe-button--followed" onClick={() => handleRemoveMovie()}>Unsubscribe</div>}
+                    <div className="movie__subscribe-button--followed" onClick={() => handleRemoveMovie()}>Subscribed</div>}
                 </div>
             </div>
             <div className="profile__tabs movie__tabs">

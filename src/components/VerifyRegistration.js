@@ -24,7 +24,8 @@ const VerifyRegistration = ({setPage, email, username, setUsername}) => {
     })
     .then(response => {
       if (response.ok) { // Check if the response status code is in the 2xx range
-        setPage("timeline");
+        setPage("login");
+        alert("Verification successful! Please login.");
       } else {
         return response.json().then(data => {
           console.error('Request failed with status: ' + response.status);

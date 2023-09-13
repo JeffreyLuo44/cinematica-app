@@ -9,14 +9,21 @@ import Profile from './Profile';
 
 function App() {
   const [page, setPage] = useState("timeline");
-  const [userId, setUserId] = useState('a33c0775-1406-4cc3-81ec-16151ecc4ade');
-  const [username, setUsername] = useState('jeffrey');
+  // const [userId, setUserId] = useState('a33c0775-1406-4cc3-81ec-16151ecc4ade');
+  const [userId, setUserId] = useState('');
+  const [viewProfileUserId, setViewProfileUserId] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [mockPosts, setMockPosts] = useState([]);
   const [mockReplies, setMockReplies] = useState("");
-  const [mockUser] = useState("SpiderManFan");
-  const [otherMockUser] = useState("ThatMovieAddict");
-  const [otherMockUser2] = useState("PenguinClub");
+  const [mockUser] = useState("a33c0775-1406-4cc3-81ec-16151ecc4ade");
+  const [otherMockUser] = useState("93cfcbd6-54b6-4961-bec5-0cf6e0a81917");
+  const [otherMockUser2] = useState("e8f2aa40-b1a8-46f2-81c3-4e0dbc3e4f9d");
+
+  const handleViewProfile = (id) => {
+    setViewProfileUserId(id);
+    setPage("profile");
+  }
 
   useEffect(() => {
     // Eventually need to add spoiler field
@@ -35,13 +42,13 @@ function App() {
 
   return (
     <div className="App">
-      {page==="login" && <Login setPage={setPage}  userId={userId} setUserId={setUserId} username={username} setUsername={setUsername}/>}
-      {page==="register" && <Register setPage={setPage}  userId={userId} setUserId={setUserId} email={email} setEmail={setEmail} username={username} setUsername={setUsername} />}
-      {page==="verifyRegistration" && <VerifyRegistration setPage={setPage} userId={userId} setUserId={setUserId} email={email} username={username} setUsername={setUsername}/>}
+      {page==="login" && <Login setPage={setPage} setUserId={setUserId} username={username} setUsername={setUsername}/>}
+      {page==="register" && <Register setPage={setPage} email={email} setEmail={setEmail} username={username} setUsername={setUsername} />}
+      {page==="verifyRegistration" && <VerifyRegistration setPage={setPage} email={email} username={username} setUsername={setUsername}/>}
       {page==="passwordReset" && <PasswordReset setPage={setPage}/>}
-      {page==="timeline" && <Timeline setPage={setPage} userId={userId} setUserId={setUserId} username={username} setEmail={setEmail} setUsername={setUsername}
+      {page==="timeline" && <Timeline setPage={setPage} userId={userId} setViewProfileUserId={setViewProfileUserId} handleViewProfile={handleViewProfile} username={username} setEmail={setEmail} setUsername={setUsername}
         mockPosts={mockPosts} setMockPosts={setMockPosts} mockReplies={mockReplies} setMockReplies={setMockReplies} mockUser={mockUser} otherMockUser={otherMockUser} otherMockUser2={otherMockUser2}/>}
-      {page==="profile" && <Profile setPage={setPage} userId={userId} setUserId={setUserId} username={username} setUsername={setUsername}
+      {page==="profile" && <Profile setPage={setPage} userId={userId} viewProfileUserId={viewProfileUserId} setViewProfileUserId={setViewProfileUserId} handleViewProfile={handleViewProfile} username={username} setUsername={setUsername}
         mockPosts={mockPosts} setMockPosts={setMockPosts} mockReplies={mockReplies} setMockReplies={setMockReplies} mockUser={mockUser} otherMockUser={otherMockUser} otherMockUser2={otherMockUser2}/>}
     </div>
   );

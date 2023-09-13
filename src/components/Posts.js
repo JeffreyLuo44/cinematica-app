@@ -1,89 +1,89 @@
 import React, { useState } from 'react';
 // Oppenheimer movie id: 872585
 // Spider-Man: Across the Spiderverse movie id: 569094
-const Posts = ({username, mockPosts, setMockPosts, mockReplies, setMockReplies, handleViewProfile, handleToggleMovieDetails}) => {
-    const [selectedPost, setSelectedPost] = useState([]);
-    const [selectedPostIndex, setSelectedPostIndex] = useState(null);
-    const [viewPost, setViewPost] = useState(false);
-    const [createReplyText, setCreateReplyText] = useState("");
+const Posts = ({userId, handleViewProfile, username, mockPosts, setMockPosts, mockReplies, setMockReplies, handleToggleMovieDetails}) => {
+  const [selectedPost, setSelectedPost] = useState([]);
+  const [selectedPostIndex, setSelectedPostIndex] = useState(null);
+  const [viewPost, setViewPost] = useState(false);
+  const [createReplyText, setCreateReplyText] = useState("");
 
-    const handleToggleReplies = (index) => {
-        setCreateReplyText('');
-        if (index !== "none"){
-          handleTempRemoveSpoilerMessage(index)
-          const selectedPostFromPosts = [...mockPosts[index]];
-          /* Remove the trash icon when viewing Replies of your own post */
-          if (selectedPostFromPosts.lastIndexOf("post__delete-icon") !== -1)
-            selectedPostFromPosts[selectedPostFromPosts.lastIndexOf("post__delete-icon")] = "hideTrashIcon";
-          setSelectedPost(selectedPostFromPosts);
-          setSelectedPostIndex(index);
-          setViewPost(true);
-        } else {
-          setSelectedPost([]);
-          setSelectedPostIndex(null);
-          setViewPost(false);
-          // Restore post to hiding the trash icon to prevent error
-          const restorePosts = [...mockPosts];
-          let lastIndex = restorePosts[selectedPostIndex].lastIndexOf("hideTrashIcon") !== -1 ? restorePosts[selectedPostIndex].lastIndexOf("hideTrashIcon") : restorePosts[selectedPostIndex].lastIndexOf("post__delete-icon");
-          restorePosts[selectedPostIndex][lastIndex] = "hideTrashIcon";
-          setMockPosts(restorePosts);
-        }
-      };
-    
-      const toggleDeleteIcon = (array, type, index) => {
-        const newArray = [...array];
-        if (index === -1){
-          let lastIndex = newArray.lastIndexOf("hideTrashIcon") !== -1 ? newArray.lastIndexOf("hideTrashIcon") : newArray.lastIndexOf("post__delete-icon");
-          newArray[lastIndex] = newArray[lastIndex] === "hideTrashIcon" ? "post__delete-icon" : "hideTrashIcon";
-          setSelectedPost(newArray);
-        }
-        else if (type === "post"){
-          let lastIndex = newArray[index].lastIndexOf("hideTrashIcon") !== -1 ? newArray[index].lastIndexOf("hideTrashIcon") : newArray[index].lastIndexOf("post__delete-icon");
-          newArray[index][lastIndex] = newArray[index][lastIndex] === "hideTrashIcon" ? "post__delete-icon" : "hideTrashIcon";
-          setMockPosts(newArray);
-        } else if (type === "replies") {
-          let lastIndex = newArray[selectedPostIndex][index].lastIndexOf("hideTrashIcon") !== -1 ? newArray[selectedPostIndex][index].lastIndexOf("hideTrashIcon") : newArray[selectedPostIndex][index].lastIndexOf("post__delete-icon");
-          newArray[selectedPostIndex][index][lastIndex] = newArray[selectedPostIndex][index][lastIndex] === "hideTrashIcon" ? "post__delete-icon" : "hideTrashIcon";
-          setMockReplies(newArray);
-        }
-      };
-    
-      function getFormattedDateTime(){
-        let currentDate = new Date(); 
-        // Month is 0 based.
-        let currentMonth = currentDate.getMonth() + 1;
-        let yearTwoDigits = currentDate.getFullYear() - 2000;
-        let currentHours = currentDate.getHours() > 12 ? currentDate.getHours() - 12 : currentDate.getHours();
-        let currentMinutes = currentDate.getMinutes() < 10 ? "0" + currentDate.getMinutes(): currentDate.getMinutes();
-        let amOrPM = currentDate.getHours() > 11 ? "pm" : "am";
-        return currentDate.getDate() + "/" + currentMonth + "/" + yearTwoDigits + " " +  currentHours + ":" + currentMinutes + amOrPM;
-      }
-    
-      const handleAddReply = () => {
-        const updatedMockReplies = [...mockReplies];
-        let newReply = [username, getFormattedDateTime(), createReplyText, 0, "hideTrashIcon"];
-        updatedMockReplies[selectedPostIndex].unshift(newReply);
-        setMockReplies(updatedMockReplies);
-        setCreateReplyText('');
-      }
-    
-      const handleTempRemoveAllSpoilers = () => {
-        let restorePosts = [...mockPosts];
-        if (restorePosts.length > 0){
-          restorePosts.map((post) => {
-            post[8] = false;
-            return post;
-          });
-        }
-        setMockPosts(restorePosts);
-      }
-    
-      const handleTempRemoveSpoilerMessage = (index) => {
+  const handleToggleReplies = (index) => {
+      setCreateReplyText('');
+      if (index !== "none"){
+        handleTempRemoveSpoilerMessage(index)
+        const selectedPostFromPosts = [...mockPosts[index]];
+        /* Remove the trash icon when viewing Replies of your own post */
+        if (selectedPostFromPosts.lastIndexOf("post__delete-icon") !== -1)
+          selectedPostFromPosts[selectedPostFromPosts.lastIndexOf("post__delete-icon")] = "hideTrashIcon";
+        setSelectedPost(selectedPostFromPosts);
+        setSelectedPostIndex(index);
+        setViewPost(true);
+      } else {
+        setSelectedPost([]);
+        setSelectedPostIndex(null);
+        setViewPost(false);
+        // Restore post to hiding the trash icon to prevent error
         const restorePosts = [...mockPosts];
-        let lastIndex = restorePosts[index].lastIndexOf(true);
-        restorePosts[index][lastIndex] = false;
+        let lastIndex = restorePosts[selectedPostIndex].lastIndexOf("hideTrashIcon") !== -1 ? restorePosts[selectedPostIndex].lastIndexOf("hideTrashIcon") : restorePosts[selectedPostIndex].lastIndexOf("post__delete-icon");
+        restorePosts[selectedPostIndex][lastIndex] = "hideTrashIcon";
         setMockPosts(restorePosts);
       }
+    };
+  
+    const toggleDeleteIcon = (array, type, index) => {
+      const newArray = [...array];
+      if (index === -1){
+        let lastIndex = newArray.lastIndexOf("hideTrashIcon") !== -1 ? newArray.lastIndexOf("hideTrashIcon") : newArray.lastIndexOf("post__delete-icon");
+        newArray[lastIndex] = newArray[lastIndex] === "hideTrashIcon" ? "post__delete-icon" : "hideTrashIcon";
+        setSelectedPost(newArray);
+      }
+      else if (type === "post"){
+        let lastIndex = newArray[index].lastIndexOf("hideTrashIcon") !== -1 ? newArray[index].lastIndexOf("hideTrashIcon") : newArray[index].lastIndexOf("post__delete-icon");
+        newArray[index][lastIndex] = newArray[index][lastIndex] === "hideTrashIcon" ? "post__delete-icon" : "hideTrashIcon";
+        setMockPosts(newArray);
+      } else if (type === "replies") {
+        let lastIndex = newArray[selectedPostIndex][index].lastIndexOf("hideTrashIcon") !== -1 ? newArray[selectedPostIndex][index].lastIndexOf("hideTrashIcon") : newArray[selectedPostIndex][index].lastIndexOf("post__delete-icon");
+        newArray[selectedPostIndex][index][lastIndex] = newArray[selectedPostIndex][index][lastIndex] === "hideTrashIcon" ? "post__delete-icon" : "hideTrashIcon";
+        setMockReplies(newArray);
+      }
+    };
+  
+    function getFormattedDateTime(){
+      let currentDate = new Date(); 
+      // Month is 0 based.
+      let currentMonth = currentDate.getMonth() + 1;
+      let yearTwoDigits = currentDate.getFullYear() - 2000;
+      let currentHours = currentDate.getHours() > 12 ? currentDate.getHours() - 12 : currentDate.getHours();
+      let currentMinutes = currentDate.getMinutes() < 10 ? "0" + currentDate.getMinutes(): currentDate.getMinutes();
+      let amOrPM = currentDate.getHours() > 11 ? "pm" : "am";
+      return currentDate.getDate() + "/" + currentMonth + "/" + yearTwoDigits + " " +  currentHours + ":" + currentMinutes + amOrPM;
+    }
+  
+    const handleAddReply = () => {
+      const updatedMockReplies = [...mockReplies];
+      let newReply = [username, getFormattedDateTime(), createReplyText, 0, "hideTrashIcon"];
+      updatedMockReplies[selectedPostIndex].unshift(newReply);
+      setMockReplies(updatedMockReplies);
+      setCreateReplyText('');
+    }
+  
+    const handleTempRemoveAllSpoilers = () => {
+      let restorePosts = [...mockPosts];
+      if (restorePosts.length > 0){
+        restorePosts.map((post) => {
+          post[8] = false;
+          return post;
+        });
+      }
+      setMockPosts(restorePosts);
+    }
+  
+    const handleTempRemoveSpoilerMessage = (index) => {
+      const restorePosts = [...mockPosts];
+      let lastIndex = restorePosts[index].lastIndexOf(true);
+      restorePosts[index][lastIndex] = false;
+      setMockPosts(restorePosts);
+    }
     
     return (<div className="post-container">
         {/* Pre-posts */}

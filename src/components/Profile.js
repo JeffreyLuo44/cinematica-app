@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MovieDetails from './MovieDetails';
 import Posts from './Posts';
 
-const Profile = ({setPage, userId, username, setUsername, mockPosts, setMockPosts, mockReplies, setMockReplies}) => {
+const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, handleViewProfile, username, setUsername, mockPosts, setMockPosts, mockReplies, setMockReplies}) => {
   const [notificationOn, setNotificationOn] = useState(true);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [profileDetails, setProfileDetails] = useState([]);
@@ -12,7 +12,7 @@ const Profile = ({setPage, userId, username, setUsername, mockPosts, setMockPost
   const [viewFollowers, setViewFollowers] = useState(false);
   const [viewFollowing, setViewFollowing] = useState(false);
   // const [viewProfileUserId, setViewProfileUserId] = useState('93cfcbd6-54b6-4961-bec5-0cf6e0a81917');
-  const [viewProfileUserId, setViewProfileUserId] = useState('a33c0775-1406-4cc3-81ec-16151ecc4ade');
+  // const [viewProfileUserId, setViewProfileUserId] = useState('a33c0775-1406-4cc3-81ec-16151ecc4ade');
   const [postTab, setPostTab] = useState("posts");
   const [movieList, setMovieList] = useState([]);
 
@@ -29,7 +29,7 @@ const Profile = ({setPage, userId, username, setUsername, mockPosts, setMockPost
     useEffect(() => {
       getAllProfileInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [viewProfileUserId]);
 
     useEffect(() => {
       checkIfFollowed();
@@ -139,12 +139,6 @@ const Profile = ({setPage, userId, username, setUsername, mockPosts, setMockPost
     setPage('login');
   }
 
-  const handleViewProfile = (userId) => {
-    /* Need to get username so this needs to be changed */
-    setViewProfileUserId(userId);
-    setPage("profile");
-  }
-
   const handleViewTimeline = () => {
     setMovieId(-1);
     setViewProfileUserId('');
@@ -157,6 +151,10 @@ const Profile = ({setPage, userId, username, setUsername, mockPosts, setMockPost
   }
 
   const handleFollowUser = () => {
+    if (userId === ''){
+      alert("Sign in to follow!");
+      return;
+    }
     // Send id data to server
     fetch('https://localhost:53134/api/users/follow', {
       method: 'POST',
@@ -271,7 +269,7 @@ const Profile = ({setPage, userId, username, setUsername, mockPosts, setMockPost
               <p onClick={() => setViewFollowers(true)}><strong>{profileDetails.follower_count}</strong> Followers</p>
             </div>
             {isFollowed === false && userId !== viewProfileUserId && <div className="profile__follow-button" onClick={() => handleFollowUser()}>Follow</div>}
-            {isFollowed === true && userId !== viewProfileUserId && <div className="profile__follow-button--followed" onClick={() => handleUnfollowUser()}>Unfollow</div>}
+            {isFollowed === true && userId !== viewProfileUserId && <div className="profile__follow-button--followed" onClick={() => handleUnfollowUser()}>Following</div>}
           </div>
           {/* Profile tabs */}
           <div className="profile__tabs">
@@ -299,11 +297,9 @@ const Profile = ({setPage, userId, username, setUsername, mockPosts, setMockPost
               <div className="follow-list__item-user">
                 <div className="cinematica__profile-circle" onClick={() => alert('test')}></div>
                 <div>
-                    <p className="post-author" onClick={() => alert('test')}>{follower.followerId}</p>
+                    <p className="post-author" onClick={() => alert('test')}>{follower.username}</p>
                 </div>
               </div>
-              <div className="profile__follow-button">Follow</div>
-              
             </div>
             ))}
           </div>
@@ -319,10 +315,9 @@ const Profile = ({setPage, userId, username, setUsername, mockPosts, setMockPost
               <div className="follow-list__item-user">
                 <div className="cinematica__profile-circle" onClick={() => alert('test')}></div>
                 <div>
-                <p className="post-author" onClick={() => alert('test')}>{following.followingId}</p>
+                <p className="post-author" onClick={() => alert('test')}>{following.username}</p>
                 </div>
               </div>
-              <div className="profile__follow-button--followed">Following</div>
             </div>
           ))}
           </div>
