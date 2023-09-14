@@ -1,20 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MovieDetails from './MovieDetails';
 import Posts from './Posts';
 
-const Timeline = ({setPage, userId, handleViewProfile, username, setUsername, mockPosts, setMockPosts, mockReplies, setMockReplies}) => {  
-  const [notificationOn, setNotificationOn] = useState(true);
+const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  }) => {  
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const [createPostText, setCreatePostText] = useState('');
   const [searchTag, setSearchTag] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+
   const [showImageTrashIcon, setShowImageTrashIcon] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [isCreateSpoilerPost, setIsCreateSpoilerPost] = useState(false);
 
   const [moviesTaggedCreatePost, setMoviesTaggedCreatePost] = useState([]);
+  const [moviesIdsTaggedCreatePost, setMoviesIdsTaggedCreatePost] = useState([]);
+
+  const [posts, setPosts] = useState([]);
+  const [postPage, setPostPage] = useState(1);
+  const [postTab, setPostTab] = useState("allposts");
   const [movieId, setMovieId] = useState(-1);
+
+  useEffect(() => {
+    getPostsTimeline(postTab);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setPostPage(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postTab]);
 
   const handleToggleMovieDetails = (id) => {
     console.log(id);
@@ -27,34 +42,61 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername, mo
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (username === ''){
+    if (userId === ''){
       alert("You must be signed in to create a post");
       return;
     }
     console.log("Post!");
 
-    let imageUrl = '';
-    if (imageFile) {
-      imageUrl = URL.createObjectURL(imageFile);
-    }
+    // let imageUrl = '';
+    // if (imageFile) {
+    //   imageUrl = URL.createObjectURL(imageFile);
+    // }
 
-    // Mock post creation
-    const updatedMockPosts = [...mockPosts];
-    // This NEEDS changing
-    let mockTaggedMovie = moviesTaggedCreatePost[0].title + " (" + moviesTaggedCreatePost[0].releaseYear + ")";
-    let newPost = [username, getFormattedDateTime(), createPostText, imageUrl, mockTaggedMovie, 0, 0, "hideTrashIcon", isCreateSpoilerPost];
-    updatedMockPosts.unshift(newPost);
-    const updatedMockReplies = [...mockReplies];
-    updatedMockReplies.unshift([]);
-    setMockPosts(updatedMockPosts);
-    setMockReplies(updatedMockReplies);
+    // Post creation
+    const date = new Date();
+    // updatedPosts.unshift(newPost);
+    // const updatedReplies = [...replies];
+    // updatedReplies.unshift([]);
+    // setPosts(updatedPosts);
+    // setReplies(updatedReplies);
     // Send post data to server
     // fetch('http://localhost:3001/post', {
-    setCreatePostText('');
-    setSearchTag('');
-    setMoviesTaggedCreatePost([]);
-    setImageFile(null);
-    setIsCreateSpoilerPost(false);
+    // Send post data to server
+    fetch('https://localhost:53134/api/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        newPost: {
+          userId: userId,
+          createdAt: date.toISOString(),
+          body: createPostText,
+          image: imageFile,
+          isSpoiler: isCreateSpoilerPost,
+        },
+        movieIds: moviesIdsTaggedCreatePost
+      })
+    })
+    .then(response => {
+      if (response.ok) { // Check if the response status code is in the 2xx range
+        //Reset create post states
+        setCreatePostText('');
+        setSearchTag('');
+        setMoviesTaggedCreatePost([]);
+        setImageFile(null);
+        setIsCreateSpoilerPost(false);
+      } else {
+        return response.json().then(data => {
+          console.error('Request failed with status: ' + response.status);
+          alert(data.message);
+        });
+      }
+      })
+      .catch(error => {
+        console.error('Error during post creation:', error);
+      });
   };
 
   const handleLogout = () => {
@@ -62,21 +104,25 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername, mo
     setPage('login');
   }
 
-  const handleToggleNotifications = () => {
-    setNotificationOn(!notificationOn);
-    /* Need to apply to database */
-  }
+  // function getFormattedDateTime(){
+  //   let currentDate = new Date(); 
+  //   // Month is 0 based.
+  //   let currentMonth = currentDate.getMonth() + 1;
+  //   let yearTwoDigits = currentDate.getFullYear() - 2000;
+  //   let currentHours = currentDate.getHours() > 12 ? currentDate.getHours() - 12 : currentDate.getHours();
+  //   let currentMinutes = currentDate.getMinutes() < 10 ? "0" + currentDate.getMinutes(): currentDate.getMinutes();
+  //   let amOrPM = currentDate.getHours() > 11 ? "pm" : "am";
+  //   return currentDate.getDate() + "/" + currentMonth + "/" + yearTwoDigits + " " +  currentHours + ":" + currentMinutes + amOrPM;
+  // }
 
-  function getFormattedDateTime(){
-    let currentDate = new Date(); 
-    // Month is 0 based.
-    let currentMonth = currentDate.getMonth() + 1;
-    let yearTwoDigits = currentDate.getFullYear() - 2000;
-    let currentHours = currentDate.getHours() > 12 ? currentDate.getHours() - 12 : currentDate.getHours();
-    let currentMinutes = currentDate.getMinutes() < 10 ? "0" + currentDate.getMinutes(): currentDate.getMinutes();
-    let amOrPM = currentDate.getHours() > 11 ? "pm" : "am";
-    return currentDate.getDate() + "/" + currentMonth + "/" + yearTwoDigits + " " +  currentHours + ":" + currentMinutes + amOrPM;
-  }
+  // function getFormattedPostCreatedAt(createdAt) {
+  //   const dateAndTime = createdAt.split('T');
+  //   const date = dateAndTime[0].split('-');
+  //   const time = dateAndTime[1].split(':');
+  //   const yearTwoDigits = date[0] - 2000;
+  //   const amOrPM = time[0] > 11 ? "pm" : "am";
+  //   return date[2] + "/" + date[1] + "/" + yearTwoDigits + " " + time[0] + ":" + time[1] + amOrPM;
+  // }
 
   // Simulate a click to find an image
   const handleImageIconClick = () => {
@@ -90,8 +136,8 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername, mo
   };
 
   // Using the Movie Search API
-  const searchMovie = (searchTag) => {
-    if (searchTag === ""){
+  const searchMovie = (search) => {
+    if (search === ""){
       setSearchResults([]);
       //To get rid of the small empty search result
       document.getElementById("search-results").style.visibility = "hidden";
@@ -101,7 +147,7 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername, mo
 
     try {
       // Send movie id to server
-      fetch('https://localhost:53134/api/movies/search/' + searchTag, {
+      fetch('https://localhost:53134/api/movies/search/' + search, {
         method: 'GET',
         headers: {
         'Content-Type': 'application/json'
@@ -123,13 +169,16 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername, mo
   
   const handleAddTaggedMovie = (id, title, releaseYear) => {
     let updatedMoviesTaggedCreatePost = [...moviesTaggedCreatePost];
+    let updatedMoviesIdsTaggedCreatePost = [...moviesIdsTaggedCreatePost];
     let newMovieTagged = {
       id: id,
       title: title,
       releaseYear: releaseYear
     }
     updatedMoviesTaggedCreatePost.push(newMovieTagged);
+    updatedMoviesIdsTaggedCreatePost.push(id);
     setMoviesTaggedCreatePost(updatedMoviesTaggedCreatePost);
+    setMoviesIdsTaggedCreatePost(updatedMoviesIdsTaggedCreatePost);
     // Reset the search bar and results
     setSearchTag("");
     document.getElementById("search-results").style.visibility = "hidden";
@@ -147,7 +196,42 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername, mo
         }
     })
     e.target.classList.add("tab--clicked");
-    // setMovieTab(tab);
+    setPostTab(tab);
+    getPostsTimeline(tab);
+  }
+
+  const getPostsTimeline = (tab) => {
+    let fetchUrl = "";
+    if (tab === "allposts"){
+      fetchUrl = 'https://localhost:53134/api/posts/all/' + postPage  + '?userId=' + userId;
+    } 
+    else if (tab === "following"){
+      fetchUrl = 'https://localhost:53134/api/posts/following/' + userId + '/' + postPage;
+    }
+    else {
+      setPosts([]);
+      return;
+    }
+
+    //Get particular page of post from the server
+    fetch(fetchUrl, {
+      method: 'GET',
+      headers: {
+      'Content-Type': 'application/json'
+      },
+    })
+    .then(response => {
+      if (response.ok) { // Check if the response status code is in the 2xx range
+          return response.json().then(data => {
+            setPosts(data);
+          });
+      } else {
+          alert(response.title);
+      }
+    })
+    .catch(error => {
+      console.error('Error during getting post details', error);
+    });
   }
 
   return (
@@ -159,7 +243,6 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername, mo
           <div>
             <i class="fa fa-home" aria-hidden="true" onClick={() => handleViewTimeline()}></i>
             {username !== "" ? <div>
-              {notificationOn ? <i class='fa fa-bell' onClick={() => handleToggleNotifications()}></i> : <i class='fa fa-bell-slash' onClick={() => handleToggleNotifications()}></i>}
               <p onClick={() => handleViewProfile(userId)}>{username}</p>
               <div className="cinematica__profile-circle" onClick={() => setDropdownVisible(!dropdownVisible)}></div>
               {dropdownVisible && (
@@ -176,11 +259,6 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername, mo
             </div>}
           </div>
         </div>
-        {/* Timeline tabs */}
-        <div className="timeline__tabs">
-          <div onClick={(event) => changeTab(event, "allposts")} className="tab--clicked">All posts</div>
-          <div onClick={(event) => changeTab(event, "following")}>Following</div>
-        </div>
       </header>
       {movieId >= 0 ? (<MovieDetails userId={userId} movieId={movieId} handleToggleMovieDetails={handleToggleMovieDetails} />) :
       (<div className="feed-container">
@@ -189,7 +267,7 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername, mo
           <div>
             <textarea className="post__text" placeholder="What's on your mind?" maxLength={280} value={createPostText} onChange={(e) => setCreatePostText(e.target.value)} required />
             <div>
-              <input type="text" className="searchBar search__timeline" value={searchTag} placeholder="Enter tag..." onChange={(e) => {setSearchTag(e.target.value); searchMovie(e.target.value);}} /><br/>
+              <input type="text" className="searchBar search__timeline" value={searchTag} placeholder="Pick movie you're talking about..." onChange={(e) => {setSearchTag(e.target.value); searchMovie(e.target.value);}} /><br/>
             </div>
             <div id="search-results" className="search-results">
               {/* Display search results here */}
@@ -223,8 +301,13 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername, mo
           </div>
           <br/>
         </form>}
+        {/* Timeline tabs */}
+        <div className="timeline__tabs">
+          <div onClick={(event) => changeTab(event, "allposts")} className="tab--clicked">All posts</div>
+          <div onClick={(event) => changeTab(event, "following")}>Following</div>
+        </div>
          {/* Posts */}
-         <Posts username={username} mockPosts={mockPosts} setMockPosts={setMockPosts} mockReplies={mockReplies} setMockReplies={setMockReplies} handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />
+         <Posts userId={userId} postTab={postTab} posts={posts} setPosts={setPosts} postPage={postPage} handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />
       </div>)}
     </div>
   );
