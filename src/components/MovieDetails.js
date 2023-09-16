@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 // Oppenheimer movie id: 872585
 // Spider-Man: Across the Spiderverse movie id: 569094
 const MovieDetails = ({userId, movieId, handleToggleMovieDetails}) => {
-    let startingPath = "https://localhost:53134/images/movies/";
     const [movieTab, setMovieTab] = useState("overview");
     const [movieDetails, setMovieDetails] = useState([]);
     const [isSubscribed, setIsSubscribed] = useState(false);
@@ -148,10 +147,10 @@ const MovieDetails = ({userId, movieId, handleToggleMovieDetails}) => {
             <div className="movie-details">
             <div class="movie__heading-container">
                 <div class="movie__banner">
-                    <img src={startingPath + movieDetails.banner} alt="Banner"/>
+                    <img src={movieDetails.banner} alt="Banner"/>
                 </div>
                 <div class="movie__poster">
-                    <img src={startingPath + movieDetails.poster} alt="Poster"/>
+                    <img src={movieDetails.poster} alt="Poster"/>
                 </div>
                 <div class="movie__main-details">
                     <p>{movieDetails.title} ({movieDetails.releaseYear})</p>

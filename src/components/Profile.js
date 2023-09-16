@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import MovieDetails from './MovieDetails';
 import Posts from './Posts';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, handleViewProfile, username, setUsername}) => {
-  let startingPath = "https://localhost:53134/images/users/";
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [userDetails, setUserDetails] = useState([]);
   const [profileDetails, setProfileDetails] = useState([]);
   const [followerList, setFollowerList] = useState([]);
   const [followingList, setFollowingList] = useState([]);
@@ -15,8 +16,12 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
   // const [viewProfileUserId, setViewProfileUserId] = useState('93cfcbd6-54b6-4961-bec5-0cf6e0a81917');
   // const [viewProfileUserId, setViewProfileUserId] = useState('a33c0775-1406-4cc3-81ec-16151ecc4ade');
   const [posts, setPosts] = useState([]);
-  const [postPage] = useState(1);
+  const [postPage, setPostPage] = useState(1);
   const [postTab, setPostTab] = useState("posts");
+
+  const [replies, setReplies] = useState([]);
+  const [replyPage, setReplyPage] = useState(1);
+  const [viewReplies, setViewReplies] = useState([]);
 
   const [movieList, setMovieList] = useState([]);
 
@@ -30,12 +35,14 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
   }
 
   useEffect(() => {
-    getPostsProfile();
+    getPostsProfile(postTab, 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
     useEffect(() => {
       getAllProfileInfo();
+      if (userId !== '')
+        getUserDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewProfileUserId, viewFollowers === false && viewFollowing === false]);
 
@@ -221,16 +228,17 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
 
   const handleCoverPictureUpload = (e) => {
     const selectedImageFile = e.target.files[0];
-
+    // Size is given in bytes
+    if (selectedImageFile.size / 1024 / 1024 > 1){
+      alert("The file size should be within 1 MB!");
+      return;
+    }
     const formData = new FormData();
     formData.append('UserId', userId); 
     formData.append('File', selectedImageFile); 
     fetch('https://localhost:53134/api/users/set-cover-picture', {
       method: 'POST',
       body: formData,
-      headers: {
-        'Content-Type': 'form-data',
-      },
     })
       .then(response => response.json())
       .then(data => {
@@ -254,20 +262,22 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
   // Simulate a click to find an image
   const handleProfilePictureUpload = (e) => {
     const selectedImageFile = e.target.files[0];
-
+    // Size is given in bytes
+    if (selectedImageFile.size / 1024 / 1024 > 1){
+      alert("The file size should be within 1 MB!");
+      return;
+    }
     const formData = new FormData();
     formData.append('UserId', userId); 
     formData.append('File', selectedImageFile); 
     fetch('https://localhost:53134/api/users/set-profile-picture', {
       method: 'POST',
       body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
     })
       .then(response => response.json())
       .then(data => {
         getAllProfileInfo();
+        getUserDetails();
         console.log(data);
       })
       .catch(error => {
@@ -283,27 +293,19 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
         }
     })
     e.target.classList.add("tab--clicked");
-    setPostTab(tab);
+    if (tab === "movies"){
+      setPosts([]);
+      setReplies([]);
+      setPostTab("movies");
+    }
+    setPostPage(1);
   }
 
-  const getPostsProfile = () => {
-    let fetchUrl = "";
-    if (postTab === "posts"){
-      fetchUrl = 'https://localhost:53134/api/users/posts/' + userId + '/' + postPage;
-    } 
-    // else if (postTab === "replies"){
-    //   fetchUrl = 'https://localhost:53134/api/users/replies/' + userId + '/' + postPage;
-    // }
-    // else if (postTab === "likes"){
-    //   fetchUrl = 'https://localhost:53134/api/users/likes/' + userId + '/' + postPage;
-    // }
-    else {
-      setPosts([]);
-      return;
-    }
-
+  const getPostsProfile = async (tab, page) => {
+    setPostTab(tab);
+    setReplies([]);
     //Get particular page of post from the server
-    fetch(fetchUrl, {
+    await fetch('https://localhost:53134/api/users/posts/' + viewProfileUserId + '/' + page, {
       method: 'GET',
       headers: {
       'Content-Type': 'application/json'
@@ -312,7 +314,17 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
     .then(response => {
       if (response.ok) { // Check if the response status code is in the 2xx range
           return response.json().then(data => {
-            setPosts(data);
+            if (data.length > 0 && postTab === tab){
+              console.log(data);
+              console.log(page);
+              let updatedPosts = [...posts, ...data];
+              console.log(updatedPosts);
+              setPosts(updatedPosts);
+              setPostPage(page + 1);
+            } else if (data.length > 0 && postTab !== tab) {
+              setPosts(data);
+              setPostPage(page + 1);
+            }
           });
       } else {
           alert(response.title);
@@ -320,6 +332,63 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
     })
     .catch(error => {
       console.error('Error during getting post details', error);
+    });
+  }
+
+  const getRepliesProfile = (tab, page) => {
+    setPostTab(tab);
+    setPosts([]);
+      //Get particular page of post from the server
+      fetch('https://localhost:53134/api/users/replies/' + viewProfileUserId + '/' + page, {
+        method: 'GET',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+      })
+      .then(response => {
+        if (response.ok) { // Check if the response status code is in the 2xx range
+            return response.json().then(data => {
+              if (data.length > 0 && postTab === tab){
+                console.log(data);
+                console.log(page);
+                let updatedReplies = [...replies, ...data];
+                console.log(updatedReplies);
+                setReplies(updatedReplies);
+                setReplyPage(page + 1);
+              } else if (data.length > 0 && postTab !== tab) {
+                setReplies(data);
+                setReplyPage(page + 1);
+              }
+              setViewReplies(true);
+            });
+        } else {
+            alert(response.title);
+        }
+      })
+      .catch(error => {
+        console.error('Error during getting reply details', error);
+      });
+  }
+
+  const getUserDetails = () => {
+    // Send profile id to server
+    fetch('https://localhost:53134/api/users/' + userId, {
+      method: 'GET',
+      headers: {
+      'Content-Type': 'application/json'
+      },
+    })
+    .then(response => {
+        if (response.ok) { // Check if the response status code is in the 2xx range
+            return response.json().then(data => {
+              setUserDetails(data);
+            });
+        } else {
+            alert(response.title);
+        }
+    })
+    .catch(error => {
+        console.error('Error during getting user details', error);
     });
   }
 
@@ -331,9 +400,9 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
           <p className="cinematica__logo logo__size-2 logo__colour-2" onClick={() => handleViewTimeline()}>Cinematica</p>
           <div>
             <i class="fa fa-home" aria-hidden="true" onClick={() => handleViewTimeline()}></i>
-            {username !== "" ? <div>
+            {userId !== "" ? <div>
               <p onClick={() => handleViewProfile(userId)}>{username}</p>
-              <div className="cinematica__profile-circle" onClick={() => setDropdownVisible(!dropdownVisible)}></div>
+              <div className="cinematica__profile-circle" onClick={() => setDropdownVisible(!dropdownVisible)}><img src={userDetails.profile_picture} alt=""  className="post-image" /></div>
               {dropdownVisible && (
               <div className="dropdown-menu">
                 <i class="fa fa-sign-out" aria-hidden="true" onClick={handleLogout}></i>
@@ -358,15 +427,19 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
           {/* Hide default "browse" control */}
           <input type="file" accept="image/*" id="coverPictureInput" style={{ display: 'none' }} onChange={handleCoverPictureUpload} />
           <div className="profile__background">
-            <img src={startingPath + profileDetails.coverPicture} alt=""/>
-            {userId === viewProfileUserId && <i class='fa fa-edit'  onClick={() => {handleSetCoverPicture()}}></i>}
+            <img src={profileDetails.cover_picture} alt=""  className="post-image" />
+            <div className="profile__background__edit">
+              {userId === viewProfileUserId && <i class='fa fa-edit'  onClick={() => {handleSetCoverPicture()}}></i>}
+            </div>
           </div>
           {/* Profile picture and username */}
           {/* Hide default "browse" control */}
           <input type="file" accept="image/*" id="profilePictureInput" style={{ display: 'none' }} onChange={handleProfilePictureUpload} />
           <div className="profile__name-photo-container">
-            <div className="profile__picture"  onClick={() => {handleSetProfilePicture()}}><img src={startingPath + profileDetails.profilePicture} alt=""/></div>
-            <p className="profile__username">{profileDetails.username}</p>
+            <div className="profile__picture"  onClick={() => {handleSetProfilePicture()}}><img src={profileDetails.profile_picture} alt=""  className="post-image" /></div>
+            <div className="profile__username-container">
+              <p className="profile__username"><strong>{profileDetails.username}</strong></p>
+            </div>
           </div>
           {/* Follower counts */}
           <div className="profile__stats">
@@ -379,17 +452,34 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
           </div>
           {/* Profile tabs */}
           <div className="profile__tabs">
-            <div onClick={(event) => changeTab(event, "posts")} className="tab--clicked">Posts</div>
-            <div onClick={(event) => changeTab(event, "replies")}>Replies</div>
-            <div onClick={(event) => changeTab(event, "likes")}>Likes</div>
+            <div onClick={(event) => {changeTab(event, "posts"); getPostsProfile("posts", 1);}} className="tab--clicked">Posts</div>
+            <div onClick={(event) => {changeTab(event, "replies"); getRepliesProfile("replies", 1);}}>Replies</div>
             <div onClick={(event) => changeTab(event, "movies")}>Movies</div>
           </div>
         </div>
         <br/>
         {/* Posts */}
-        {postTab !== "movies" ? (<Posts userId={userId} postTab={postTab} posts={posts} setPosts={setPosts} postPage={postPage} handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />) 
-        :
-        (<div>{movieList.map((movie) => (
+        
+        {postTab === "posts" && (
+          <InfiniteScroll
+            dataLength={posts.length}
+            next={() => getPostsProfile(postTab, postPage)}
+            hasMore={true}
+            >
+          <Posts userId={userId} postTab={postTab} posts={posts} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} profileUsername={profileDetails.username} profilePicture={profileDetails.profile_picture}
+          handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />
+          </InfiniteScroll>) }
+        {postTab === "replies" && (
+          <InfiniteScroll
+            dataLength={replies.length}
+            next={() => getRepliesProfile("replies", replyPage)}
+            hasMore={true}
+            >
+          <Posts userId={userId} postTab={postTab} posts={[]} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} profileUsername={profileDetails.username} profilePicture={profileDetails.profile_picture}
+          handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />
+          </InfiniteScroll>) }
+        {postTab === "movies" && (
+        <div>{movieList.map((movie) => (
           <div key={movie.id} onClick={() => handleToggleMovieDetails(movie.id)}><i class='fa fa-film'></i> {movie.title} ({movie.releaseYear})</div>
         ))}</div>) }
       </div>)}

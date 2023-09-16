@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import MovieDetails from './MovieDetails';
 import Posts from './Posts';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  }) => {  
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [userDetails, setUserDetails] = useState([]);
 
   const [createPostText, setCreatePostText] = useState('');
   const [searchTag, setSearchTag] = useState('');
@@ -19,17 +21,25 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
   const [posts, setPosts] = useState([]);
   const [postPage, setPostPage] = useState(1);
   const [postTab, setPostTab] = useState("allposts");
+
+  const [replies, setReplies] = useState([]);
+  const [replyPage, setReplyPage] = useState(1);
+  const [viewReplies, setViewReplies] = useState([]);
+
   const [movieId, setMovieId] = useState(-1);
 
   useEffect(() => {
-    getPostsTimeline(postTab);
+    getPostsTimeline(postTab, 1);
+    if (userId !== '')
+      getUserDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    setPostPage(1);
+    setPosts([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postTab]);
+
 
   const handleToggleMovieDetails = (id) => {
     console.log(id);
@@ -46,22 +56,35 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
       alert("You must be signed in to create a post");
       return;
     }
+    if (moviesIdsTaggedCreatePost.length === 0){
+      alert("You must tag at least one movie to post");
+      return;
+    }
     console.log("Post!");
+    console.log(imageFile);
+    if (imageFile !== null) {
+      const formData = new FormData();
+      formData.append('imageFile', imageFile); 
+      console.log(formData);
+      fetch('https://localhost:53134/api/posts/upload', {
+        method: 'POST',
+        body: formData,
+      })
+        .then(response => response.json())
+        .then(data => {
+          handleAddPost(data.fileName);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    } else {
+      handleAddPost("");
+    }
+  };
 
-    // let imageUrl = '';
-    // if (imageFile) {
-    //   imageUrl = URL.createObjectURL(imageFile);
-    // }
-
+  const handleAddPost = (generatedImageFileName) => {
     // Post creation
     const date = new Date();
-    // updatedPosts.unshift(newPost);
-    // const updatedReplies = [...replies];
-    // updatedReplies.unshift([]);
-    // setPosts(updatedPosts);
-    // setReplies(updatedReplies);
-    // Send post data to server
-    // fetch('http://localhost:3001/post', {
     // Send post data to server
     fetch('https://localhost:53134/api/posts', {
       method: 'POST',
@@ -73,56 +96,42 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
           userId: userId,
           createdAt: date.toISOString(),
           body: createPostText,
-          image: imageFile,
           isSpoiler: isCreateSpoilerPost,
+          image: generatedImageFileName,
         },
         movieIds: moviesIdsTaggedCreatePost
       })
     })
     .then(response => {
       if (response.ok) { // Check if the response status code is in the 2xx range
-        //Reset create post states
-        setCreatePostText('');
-        setSearchTag('');
-        setMoviesTaggedCreatePost([]);
-        setImageFile(null);
-        setIsCreateSpoilerPost(false);
-      } else {
         return response.json().then(data => {
-          console.error('Request failed with status: ' + response.status);
-          alert(data.message);
-        });
-      }
-      })
-      .catch(error => {
-        console.error('Error during post creation:', error);
-      });
-  };
+          let updatedPosts = [data, ...posts];
+          setPosts(updatedPosts);
+          console.log(data);
+          //Reset create post states
+          setCreatePostText('');
+          setSearchTag('');
+          setMoviesTaggedCreatePost([]);
+          setMoviesIdsTaggedCreatePost([]);
+          setImageFile(null);
+          setIsCreateSpoilerPost(false);
+     });
+   } else {
+     return response.json().then(data => {
+       console.error('Request failed with status: ' + response.status);
+       alert(data.message);
+     });
+   }
+   })
+   .catch(error => {
+     console.error('Error during post creation:', error);
+   });
+  }
 
   const handleLogout = () => {
     setUsername('');
     setPage('login');
   }
-
-  // function getFormattedDateTime(){
-  //   let currentDate = new Date(); 
-  //   // Month is 0 based.
-  //   let currentMonth = currentDate.getMonth() + 1;
-  //   let yearTwoDigits = currentDate.getFullYear() - 2000;
-  //   let currentHours = currentDate.getHours() > 12 ? currentDate.getHours() - 12 : currentDate.getHours();
-  //   let currentMinutes = currentDate.getMinutes() < 10 ? "0" + currentDate.getMinutes(): currentDate.getMinutes();
-  //   let amOrPM = currentDate.getHours() > 11 ? "pm" : "am";
-  //   return currentDate.getDate() + "/" + currentMonth + "/" + yearTwoDigits + " " +  currentHours + ":" + currentMinutes + amOrPM;
-  // }
-
-  // function getFormattedPostCreatedAt(createdAt) {
-  //   const dateAndTime = createdAt.split('T');
-  //   const date = dateAndTime[0].split('-');
-  //   const time = dateAndTime[1].split(':');
-  //   const yearTwoDigits = date[0] - 2000;
-  //   const amOrPM = time[0] > 11 ? "pm" : "am";
-  //   return date[2] + "/" + date[1] + "/" + yearTwoDigits + " " + time[0] + ":" + time[1] + amOrPM;
-  // }
 
   // Simulate a click to find an image
   const handleImageIconClick = () => {
@@ -132,7 +141,11 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
 
   const handleImageUpload = (e) => {
     const selectedImageFile = e.target.files[0];
-    setImageFile(selectedImageFile);
+    // Size is given in bytes
+    if (selectedImageFile.size / 1024 / 1024 > 1)
+      alert("The file size should be within 1 MB!");
+    else
+      setImageFile(selectedImageFile);
   };
 
   // Using the Movie Search API
@@ -159,7 +172,6 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
                 setSearchResults(data);
             });
         } else {
-            alert(response.title);
         }
     });
     } catch (error) {
@@ -175,13 +187,39 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
       title: title,
       releaseYear: releaseYear
     }
-    updatedMoviesTaggedCreatePost.push(newMovieTagged);
-    updatedMoviesIdsTaggedCreatePost.push(id);
-    setMoviesTaggedCreatePost(updatedMoviesTaggedCreatePost);
-    setMoviesIdsTaggedCreatePost(updatedMoviesIdsTaggedCreatePost);
+      fetch('https://localhost:53134/api/movies/' + id, {
+        method: 'GET',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    })
+    .then(response => {
+        if (response.ok) { // Check if the response status code is in the 2xx range
+          updatedMoviesTaggedCreatePost.push(newMovieTagged);
+          updatedMoviesIdsTaggedCreatePost.push(id);
+          setMoviesTaggedCreatePost(updatedMoviesTaggedCreatePost);
+          setMoviesIdsTaggedCreatePost(updatedMoviesIdsTaggedCreatePost);
+        } else {
+          
+        }
+    })
+    .catch(error => {
+        console.error('Error during getting movie details', error);
+    });
+
     // Reset the search bar and results
     setSearchTag("");
     document.getElementById("search-results").style.visibility = "hidden";
+  }
+
+  const handleDeleteTaggedMovie = (id) => {
+    let updatedMoviesTaggedCreatePost = [...moviesTaggedCreatePost];
+    let updatedMoviesIdsTaggedCreatePost = [...moviesIdsTaggedCreatePost];
+    const movieIndex = moviesTaggedCreatePost.findIndex(movie => movie.id === id);
+    updatedMoviesTaggedCreatePost.splice(movieIndex, 1);
+    updatedMoviesIdsTaggedCreatePost.splice(movieIndex, 1);
+    setMoviesTaggedCreatePost(updatedMoviesTaggedCreatePost);
+    setMoviesIdsTaggedCreatePost(updatedMoviesIdsTaggedCreatePost);
   }
 
   const handleViewTimeline = () => {
@@ -189,6 +227,10 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
   }
 
   const changeTab = (e, tab) => {
+    if (tab === "following" && userId === ''){
+      alert("Please sign in to view posts from who you are following!");
+      return;
+    }
     const tabs = document.getElementsByClassName("timeline__tabs")[0].childNodes;
     tabs.forEach((item, index) => {
         if (item.classList.contains("tab--clicked")) {
@@ -196,17 +238,18 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
         }
     })
     e.target.classList.add("tab--clicked");
-    setPostTab(tab);
-    getPostsTimeline(tab);
+    setPostPage(1);
+    getPostsTimeline(tab, 1);
   }
 
-  const getPostsTimeline = (tab) => {
+  const getPostsTimeline = async (tab, page) => {
+    setPostTab(tab);
     let fetchUrl = "";
     if (tab === "allposts"){
-      fetchUrl = 'https://localhost:53134/api/posts/all/' + postPage  + '?userId=' + userId;
+      fetchUrl = 'https://localhost:53134/api/posts/all/' + page  + '?userId=' + userId;
     } 
     else if (tab === "following"){
-      fetchUrl = 'https://localhost:53134/api/posts/following/' + userId + '/' + postPage;
+      fetchUrl = 'https://localhost:53134/api/posts/following/' + userId + '/' + page;
     }
     else {
       setPosts([]);
@@ -214,7 +257,7 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
     }
 
     //Get particular page of post from the server
-    fetch(fetchUrl, {
+    await fetch(fetchUrl, {
       method: 'GET',
       headers: {
       'Content-Type': 'application/json'
@@ -223,7 +266,17 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
     .then(response => {
       if (response.ok) { // Check if the response status code is in the 2xx range
           return response.json().then(data => {
-            setPosts(data);
+            if (data.length > 0 && postTab === tab){
+              console.log(data);
+              console.log(page);
+              let updatedPosts = [...posts, ...data];
+              console.log(updatedPosts);
+              setPosts(updatedPosts);
+              setPostPage(page + 1);
+            } else if (data.length > 0 && postTab !== tab) {
+              setPosts(data);
+              setPostPage(page + 1);
+            }
           });
       } else {
           alert(response.title);
@@ -231,6 +284,28 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
     })
     .catch(error => {
       console.error('Error during getting post details', error);
+    });
+  }
+
+  const getUserDetails = () => {
+    // Send profile id to server
+    fetch('https://localhost:53134/api/users/' + userId, {
+      method: 'GET',
+      headers: {
+      'Content-Type': 'application/json'
+      },
+    })
+    .then(response => {
+        if (response.ok) { // Check if the response status code is in the 2xx range
+            return response.json().then(data => {
+              setUserDetails(data);
+            });
+        } else {
+            alert(response.title);
+        }
+    })
+    .catch(error => {
+        console.error('Error during getting user details', error);
     });
   }
 
@@ -242,9 +317,9 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
           <p className="cinematica__logo logo__size-2 logo__colour-2" onClick={() => handleViewTimeline()}>Cinematica</p>
           <div>
             <i class="fa fa-home" aria-hidden="true" onClick={() => handleViewTimeline()}></i>
-            {username !== "" ? <div>
+            {userId !== "" ? <div>
               <p onClick={() => handleViewProfile(userId)}>{username}</p>
-              <div className="cinematica__profile-circle" onClick={() => setDropdownVisible(!dropdownVisible)}></div>
+              <div className="cinematica__profile-circle" onClick={() => setDropdownVisible(!dropdownVisible)}><img src={userDetails.profile_picture} alt="" /></div>
               {dropdownVisible && (
               <div className="dropdown-menu">
                 <p onClick={() => handleViewProfile(userId)}>Profile</p>
@@ -271,20 +346,23 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
             </div>
             <div id="search-results" className="search-results">
               {/* Display search results here */}
-              {searchResults.map((result) => (
+              {searchResults.length > 0 && searchTag !== "" ? searchResults.map((result) => (
                 <div key={result.id} onClick={() => handleAddTaggedMovie(result.id, result.title, result.releaseYear)}>{result.title} ({result.releaseYear})</div>
-              ))}
+              )) : <div>No movies found</div>}
             </div>
             {moviesTaggedCreatePost.length > 0 && <br/>}
-            <div className="post-movie">
+            <div className="post-movie-search">
               {moviesTaggedCreatePost.map((taggedMovie) => (
-                <div key={taggedMovie.id} onClick={() => handleToggleMovieDetails(taggedMovie.id)}><i class='fa fa-film'></i> {taggedMovie.title} ({taggedMovie.releaseYear})</div>
+                <div>
+                  <span key={taggedMovie.id} onClick={() => handleToggleMovieDetails(taggedMovie.id)}><i class='fa fa-film'></i> {taggedMovie.title} ({taggedMovie.releaseYear})</span>&nbsp;
+                  <span className="tag__delete-icon"><i class="fa fa-trash" aria-hidden="true" onClick={() => handleDeleteTaggedMovie(taggedMovie.id)}></i></span>
+                </div>
               ))}
             </div>
           </div>
           {/* Display image preview */}
           {imageFile && <div className="image-preview-container" onMouseEnter={() => setShowImageTrashIcon(true)} onMouseLeave={() => setShowImageTrashIcon(false)}>
-            {showImageTrashIcon === true && <div className="image-trash-icon"><i class="fa fa-trash" aria-hidden="true" onClick={() => setImageFile(null)}></i></div>}
+            {showImageTrashIcon === true && <div className="post__delete-icon"><i class="fa fa-trash" aria-hidden="true" onClick={() => setImageFile(null)}></i></div>}
             <div className="image-preview-wrapper"><br/><img src={URL.createObjectURL(imageFile)} alt="Selected" className="image-preview" /></div>
           </div>}
           <div className="post__controls">
@@ -302,12 +380,22 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
           <br/>
         </form>}
         {/* Timeline tabs */}
-        <div className="timeline__tabs">
-          <div onClick={(event) => changeTab(event, "allposts")} className="tab--clicked">All posts</div>
-          <div onClick={(event) => changeTab(event, "following")}>Following</div>
+        <div className="sticky">
+          <div className="timeline__tabs">
+            <div onClick={(event) => changeTab(event, "allposts")} className="tab--clicked">All posts</div>
+            <div onClick={(event) => changeTab(event, "following")}>Following</div>
+          </div>
         </div>
          {/* Posts */}
-         <Posts userId={userId} postTab={postTab} posts={posts} setPosts={setPosts} postPage={postPage} handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />
+         <InfiniteScroll
+            dataLength={posts.length}
+            next={() => getPostsTimeline(postTab, postPage)}
+            hasMore={true}
+            // loader={<h4>Loading...</h4>}
+          >
+          <Posts userId={userId} postTab={postTab} posts={posts} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} 
+          handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />
+        </InfiniteScroll>
       </div>)}
     </div>
   );

@@ -214,6 +214,7 @@ input.searchBar {
 }
 
 .cinematica__content {
+  padding: 1rem;
   max-width: 600px;
   margin: auto;
 }
@@ -242,6 +243,12 @@ input.searchBar {
   border-radius: 0.7rem;
 }
 
+.sticky {
+  position: sticky;
+  top: 4.7rem;
+  z-index: 100;
+}
+
 .cinematica__header-upper div {
   display: flex;
   align-items: center;
@@ -252,7 +259,7 @@ input.searchBar {
 }
 
 .post__controls {
-  margin-top: 0.3rem;
+  margin-top: 0.6rem;
 }
 
 .post__controls div:first-child > * {
@@ -272,6 +279,13 @@ input.searchBar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  overflow: hidden; /* Clip the image to the circular shape */
+}
+
+.cinematica__profile-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Scale and crop the image to cover the container */
 }
 
 .cinematica__guest-view-button {
@@ -299,7 +313,7 @@ textarea.post__text {
   margin-bottom: 0.3rem;
 }
 
-.mock-post {
+.post {
   position: relative;
   background-color: var(--color-light-grey);
   padding: 1.2rem;
@@ -312,16 +326,22 @@ textarea.post__text {
   top: 0.5rem;
   right: 0.5rem;
   background-color: var(--color-grey);
-  color: var(--color-red);
+  color: var(--color-magenta);
   padding: 0.3rem 0.5rem;
   border-radius: 50%;
 }
 
-.post-image {
-  display: block; 
-  margin: 0 auto; /* Center-align horizontally using margin */
-  max-width: 100%; /* Ensure the image doesn't exceed its container */
-  max-height: 320px;
+.tag__delete-icon {
+  position: absolute;
+  background-color: var(--color-grey);
+  color: var(--color-magenta);
+  padding: 0.1rem 0.25rem;
+  border-radius: 50%;
+}
+
+.post-image img {
+  position: absolute; /* Set the image inside the post container to absolute positioning */
+  margin-left: -1.2rem; /* Shift the image 2rem to the left */
 }
 
 .profile__container, .mock-post, .movie__banner {
@@ -336,19 +356,30 @@ textarea.post__text {
 
 .profile__background {
   position: relative;
-  background-color: var(--color-grey-2);
   height: 10rem;
+  overflow: hidden;
 }
 
-.profile__background i {
+.profile__background img {
+  width: 100%;
+  top: -9999px;
+  left: -9999px;
+  bottom: -9999px;
+  right: -9999px;
+  opacity: 0.5;
+  margin: auto;
   position: absolute;
-  top: 0.7rem;
-  right: 0.7rem;
+}
+
+.profile__background__edit {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }
 
 .profile__name-photo-container {
   position: absolute;
-  bottom: 5rem;
+  bottom: 6rem;
 }
 
 .profile__name-photo-container {
@@ -362,11 +393,26 @@ textarea.post__text {
   width: 130px;
   height: 130px;
   border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile__picture img {
+  width: 100%;
+  height: 100%; 
+  object-fit: cover; /* Scale and crop the image to cover the container */
+}
+
+.profile__username-container {
+  position: absolute;
+  margin-top: 10px;
 }
 
 .profile__username {
+  position: absolute;
+  padding-left: 140px;
   display: inline-block;
   font-size: 1.4rem;
+  bottom: 0;
 }
 
 .profile__stats {
@@ -437,7 +483,6 @@ textarea.post__text {
 
 .image-preview {
   max-width: 100%;
-  max-height: 320px;
 }
 
 .image-trash-icon {
@@ -544,13 +589,31 @@ textarea.post__text {
   border-radius: 0.5rem;
   visibility: hidden;
   filter: drop-shadow(5px 5px 6px #00000035);
-  z-index: 99;
+  z-index: 101;
+}
+
+.post-movie-search {
+  text-align: left;
 }
 
 .post-movie {
   text-align: left;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.post-movie > span {
+  padding-right: 1rem;
+}
+
+.post-likes {
+  color: var(--color-magenta);
 }
 
 .tab--clicked {
   color: var(--color-blue);
+}
+
+.form {
+  padding-bottom: 2rem;
 }

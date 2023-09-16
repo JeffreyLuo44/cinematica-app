@@ -10,7 +10,7 @@ import Profile from './Profile';
 function App() {
   const [page, setPage] = useState("timeline");
   // const [userId, setUserId] = useState('a33c0775-1406-4cc3-81ec-16151ecc4ade');
-  const [userId, setUserId] = useState('a33c0775-1406-4cc3-81ec-16151ecc4ade');
+  const [userId, setUserId] = useState('93cfcbd6-54b6-4961-bec5-0cf6e0a81917');
   const [viewProfileUserId, setViewProfileUserId] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
