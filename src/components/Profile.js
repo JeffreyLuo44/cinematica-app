@@ -3,7 +3,7 @@ import MovieDetails from './MovieDetails';
 import Posts from './Posts';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, handleViewProfile, username, setUsername}) => {
+const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUserId, handleViewProfile, username, setUsername}) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [userDetails, setUserDetails] = useState([]);
   const [profileDetails, setProfileDetails] = useState([]);
@@ -127,8 +127,9 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
   }
 
   const checkIfFollowed = () => {
-    let isUserIdInArray = followerList.some(user => user.followerId === userId);
+    let isUserIdInArray = followerList.some(user => user.userId === userId);
     setIsFollowed(isUserIdInArray);
+    console.log(isUserIdInArray);
   }
 
   const getMovieList =() => {
@@ -172,7 +173,8 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
     fetch('https://localhost:53134/api/users/follow', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`,
       },
       body: JSON.stringify({
         userId: viewProfileUserId,
@@ -199,7 +201,8 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
     fetch('https://localhost:53134/api/users/unfollow', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`,
       },
       body: JSON.stringify({
         userId: user_id,
@@ -238,6 +241,9 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
     formData.append('File', selectedImageFile); 
     fetch('https://localhost:53134/api/users/set-cover-picture', {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${idToken}`,
+      },
       body: formData,
     })
       .then(response => response.json())
@@ -272,6 +278,9 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
     formData.append('File', selectedImageFile); 
     fetch('https://localhost:53134/api/users/set-profile-picture', {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${idToken}`,
+      },
       body: formData,
     })
       .then(response => response.json())
@@ -419,7 +428,7 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
         <div>
       </div>
       </header>
-      {movieId >= 0 ? (<MovieDetails userId={userId} movieId={movieId} handleToggleMovieDetails={handleToggleMovieDetails} />) :
+      {movieId >= 0 ? (<MovieDetails idToken={idToken} userId={userId} movieId={movieId} handleToggleMovieDetails={handleToggleMovieDetails} />) :
       (<div className="feed-container">
         {(viewFollowing === false && viewFollowers === false) && (<div>
         <div className="profile__container">
@@ -466,7 +475,7 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
             next={() => getPostsProfile(postTab, postPage)}
             hasMore={true}
             >
-          <Posts userId={userId} postTab={postTab} posts={posts} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} profileUsername={profileDetails.username} profilePicture={profileDetails.profile_picture}
+          <Posts idToken={idToken} userId={userId} postTab={postTab} posts={posts} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} profileUsername={profileDetails.username} profilePicture={profileDetails.profile_picture}
           handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />
           </InfiniteScroll>) }
         {postTab === "replies" && (
@@ -475,7 +484,7 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
             next={() => getRepliesProfile("replies", replyPage)}
             hasMore={true}
             >
-          <Posts userId={userId} postTab={postTab} posts={[]} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} profileUsername={profileDetails.username} profilePicture={profileDetails.profile_picture}
+          <Posts idToken={idToken} userId={userId} postTab={postTab} posts={[]} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} profileUsername={profileDetails.username} profilePicture={profileDetails.profile_picture}
           handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />
           </InfiniteScroll>) }
         {postTab === "movies" && (
@@ -497,11 +506,11 @@ const Profile = ({setPage, userId, viewProfileUserId, setViewProfileUserId, hand
                 </div>
               </div>
               {userId !== viewProfileUserId && 
-              userId !== follower.followerId && ownFollowingList.some(user => user.userId === follower.followerId) === false && <div className="profile__follow-button" onClick={() => handleFollowUser()}>Follow</div>}
+              userId !== follower.userId && ownFollowingList.some(user => user.userId === follower.userId) === false && <div className="profile__follow-button" onClick={() => handleFollowUser()}>Follow</div>}
               {userId !== viewProfileUserId && 
-              ownFollowingList.some(user => user.followerId === follower.followerId) === true && <div className="profile__follow-button--followed" onClick={() => handleUnfollowUser(viewProfileUserId, userId)}>Following</div>}
+              ownFollowingList.some(user => user.userId === follower.userId) === true && <div className="profile__follow-button--followed" onClick={() => handleUnfollowUser(viewProfileUserId, userId)}>Following</div>}
 
-              {userId === viewProfileUserId && followerList.some(user => user.followerId === follower.followerId) === true && <div className="profile__follow-button--followed" onClick={() => handleUnfollowUser(userId, follower.followerId)}>Remove</div>}
+              {userId === viewProfileUserId && followerList.some(user => user.userId === follower.userId) === true && <div className="profile__follow-button--followed" onClick={() => handleUnfollowUser(userId, follower.userId)}>Remove</div>}
             </div>
             ))}
           </div>

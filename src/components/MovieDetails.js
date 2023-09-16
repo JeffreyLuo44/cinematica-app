@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // Oppenheimer movie id: 872585
 // Spider-Man: Across the Spiderverse movie id: 569094
-const MovieDetails = ({userId, movieId, handleToggleMovieDetails}) => {
+const MovieDetails = ({idToken, userId, movieId, handleToggleMovieDetails}) => {
     const [movieTab, setMovieTab] = useState("overview");
     const [movieDetails, setMovieDetails] = useState([]);
     const [isSubscribed, setIsSubscribed] = useState(false);
@@ -49,7 +49,8 @@ const MovieDetails = ({userId, movieId, handleToggleMovieDetails}) => {
         fetch('https://localhost:53134/api/users/add-movie', {
             method: 'POST',
             headers: {
-            'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`,
             },
             body: JSON.stringify({
             userId: userId,
@@ -77,7 +78,8 @@ const MovieDetails = ({userId, movieId, handleToggleMovieDetails}) => {
         fetch('https://localhost:53134/api/users/remove-movie', {
             method: 'POST',
             headers: {
-            'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`,
             },
             body: JSON.stringify({
             userId: userId,

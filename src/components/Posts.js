@@ -3,7 +3,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { DateTime } from 'luxon';
 // Oppenheimer movie id: 872585
 // Spider-Man: Across the Spiderverse movie id: 569094
-const Posts = ({userId, postTab, posts, setPosts, postPage, setPostPage, replies, setReplies, replyPage, setReplyPage, viewReplies, setViewReplies, handleViewProfile, handleToggleMovieDetails, profileUsername, profilePicture}) => {
+const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage, replies, setReplies, replyPage, setReplyPage, viewReplies, setViewReplies, handleViewProfile, handleToggleMovieDetails, profileUsername, profilePicture}) => {
   const [selectedPost, setSelectedPost] = useState([]);
   const [selectedPostIndex, setSelectedPostIndex] = useState("none");
   const [viewPost, setViewPost] = useState(false);
@@ -83,7 +83,6 @@ const Posts = ({userId, postTab, posts, setPosts, postPage, setPostPage, replies
 
       // Format as ISO 8601 in the target zone
       const nzISOString = nzDateTime.toISO();
-      console.log(nzISOString);
       const dateAndTime = nzISOString.split('T');
       const date = dateAndTime[0].split('-');
       const time = dateAndTime[1].split(':');
@@ -103,7 +102,8 @@ const Posts = ({userId, postTab, posts, setPosts, postPage, setPostPage, replies
       fetch('https://localhost:53134/api/replies', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
         },
         body: JSON.stringify({
           postId: postId,
@@ -202,18 +202,11 @@ const Posts = ({userId, postTab, posts, setPosts, postPage, setPostPage, replies
       }
     }
 
-    const handleAddTaggedMovieForPostSearch = (id, title, releaseYear) => {
-      // let newMovieTagged = {
-      //   id: id,
-      //   title: title,
-      //   releaseYear: releaseYear
-      // }
-      // setTaggedMovieForPostSearch(newMovieTagged);
+    const handleAddTaggedMovieForPostSearch = (id) => {
       getPostsByTaggedMovie(id, 1);
       setTaggedMovieIdForPostSearch(id);
-      // Reset the search bar and results
+      // Reset the search results
       setSearchPostResults([]);
-      // document.getElementById("search-results").style.visibility = "hidden";
     }
 
     const handleLikeReply = (replyId) => {
@@ -225,7 +218,8 @@ const Posts = ({userId, postTab, posts, setPosts, postPage, setPostPage, replies
       fetch('https://localhost:53134/api/replies/like/' + userId + '/' + replyId, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
         },
       })
       .then(response => {
@@ -262,7 +256,8 @@ const Posts = ({userId, postTab, posts, setPosts, postPage, setPostPage, replies
       fetch('https://localhost:53134/api/posts/like/' + userId + '/' + postId, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
         },
       })
       .then(response => {
@@ -305,7 +300,8 @@ const Posts = ({userId, postTab, posts, setPosts, postPage, setPostPage, replies
         fetch('https://localhost:53134/api/posts/' + id, {
           method: 'DELETE',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
           }
         }).then(response => {
           if (response.ok) {
@@ -334,7 +330,8 @@ const Posts = ({userId, postTab, posts, setPosts, postPage, setPostPage, replies
         fetch('https://localhost:53134/api/replies/' + id, {
           method: 'DELETE',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
           }
         }).then(response => {
           if (response.ok) {

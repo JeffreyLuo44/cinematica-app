@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-const Login = ({setUserId, setPage, username, setUsername}) => {
+const Login = ({setIdToken, setUserId, setPage, username, setUsername}) => {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
+    setIdToken('');
     setUserId('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -27,6 +28,7 @@ const Login = ({setUserId, setPage, username, setUsername}) => {
       if (data.user_id !== undefined) {
         console.log(data.user_id);
         setUserId(data.user_id);
+        setIdToken(data.idToken);
         setPage("timeline");
       } else if (data.message === "User hasn't been verified yet.") {
         setPage("verifyRegistration");

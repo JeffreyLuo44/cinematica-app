@@ -3,7 +3,7 @@ import MovieDetails from './MovieDetails';
 import Posts from './Posts';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  }) => {  
+const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUsername  }) => {  
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [userDetails, setUserDetails] = useState([]);
 
@@ -68,6 +68,9 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
       console.log(formData);
       fetch('https://localhost:53134/api/posts/upload', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${idToken}`,
+        },
         body: formData,
       })
         .then(response => response.json())
@@ -89,7 +92,8 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
     fetch('https://localhost:53134/api/posts', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`,
       },
       body: JSON.stringify({
         newPost: {
@@ -200,7 +204,7 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
           setMoviesTaggedCreatePost(updatedMoviesTaggedCreatePost);
           setMoviesIdsTaggedCreatePost(updatedMoviesIdsTaggedCreatePost);
         } else {
-          
+
         }
     })
     .catch(error => {
@@ -335,7 +339,7 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
           </div>
         </div>
       </header>
-      {movieId >= 0 ? (<MovieDetails userId={userId} movieId={movieId} handleToggleMovieDetails={handleToggleMovieDetails} />) :
+      {movieId >= 0 ? (<MovieDetails idToken={idToken} userId={userId} movieId={movieId} handleToggleMovieDetails={handleToggleMovieDetails} />) :
       (<div className="feed-container">
         {/* Create post */}
         {<form className="form" onSubmit={handleSubmit}>
@@ -393,7 +397,7 @@ const Timeline = ({setPage, userId, handleViewProfile, username, setUsername  })
             hasMore={true}
             // loader={<h4>Loading...</h4>}
           >
-          <Posts userId={userId} postTab={postTab} posts={posts} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} 
+          <Posts idToken={idToken} userId={userId} postTab={postTab} posts={posts} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} 
           handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />
         </InfiniteScroll>
       </div>)}
