@@ -14,8 +14,6 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
   const [isFollowed, setIsFollowed] = useState(false);
   const [viewFollowers, setViewFollowers] = useState(false);
   const [viewFollowing, setViewFollowing] = useState(false);
-  // const [viewProfileUserId, setViewProfileUserId] = useState('93cfcbd6-54b6-4961-bec5-0cf6e0a81917');
-  // const [viewProfileUserId, setViewProfileUserId] = useState('a33c0775-1406-4cc3-81ec-16151ecc4ade');
   const [posts, setPosts] = useState([]);
   const [postPage, setPostPage] = useState(1);
   const [postTab, setPostTab] = useState("posts");
@@ -27,6 +25,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
   const [movieList, setMovieList] = useState([]);
 
   const [movieId, setMovieId] = useState(-1);
+  
   const handleToggleMovieDetails = (id) => {
     if (movieId === -1){
       setMovieId(id);
@@ -130,7 +129,6 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
   const checkIfFollowed = () => {
     let isUserIdInArray = followerList.some(user => user.userId === userId);
     setIsFollowed(isUserIdInArray);
-    console.log(isUserIdInArray);
   }
 
   const getMovieList =() => {
@@ -250,7 +248,6 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
       .then(response => response.json())
       .then(data => {
         getAllProfileInfo();
-        console.log(data);
       })
       .catch(error => {
         console.error('Error:', error);
@@ -288,7 +285,6 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
       .then(data => {
         getAllProfileInfo();
         getUserDetails();
-        console.log(data);
       })
       .catch(error => {
         console.error('Error:', error);
@@ -325,10 +321,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
       if (response.ok) { // Check if the response status code is in the 2xx range
           return response.json().then(data => {
             if (data.length > 0 && postTab === tab){
-              console.log(data);
-              console.log(page);
               let updatedPosts = [...posts, ...data];
-              console.log(updatedPosts);
               setPosts(updatedPosts);
               setPostPage(page + 1);
             } else if (data.length > 0 && postTab !== tab) {
@@ -359,10 +352,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
         if (response.ok) { // Check if the response status code is in the 2xx range
             return response.json().then(data => {
               if (data.length > 0 && postTab === tab){
-                console.log(data);
-                console.log(page);
                 let updatedReplies = [...replies, ...data];
-                console.log(updatedReplies);
                 setReplies(updatedReplies);
                 setReplyPage(page + 1);
               } else if (data.length > 0 && postTab !== tab) {
@@ -476,7 +466,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
             next={() => getPostsProfile(postTab, postPage)}
             hasMore={true}
             >
-          <Posts idToken={idToken} userId={userId} postTab={postTab} posts={posts} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} profileUsername={profileDetails.username} profilePicture={profileDetails.profile_picture}
+          <Posts idToken={idToken} userId={userId} posts={posts} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} profileUsername={profileDetails.username} profilePicture={profileDetails.profile_picture}
           handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />
           </InfiniteScroll>) }
         {postTab === "replies" && (
@@ -485,7 +475,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
             next={() => getRepliesProfile("replies", replyPage)}
             hasMore={true}
             >
-          <Posts idToken={idToken} userId={userId} postTab={postTab} posts={[]} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} profileUsername={profileDetails.username} profilePicture={profileDetails.profile_picture}
+          <Posts idToken={idToken} userId={userId} posts={[]} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} profileUsername={profileDetails.username} profilePicture={profileDetails.profile_picture}
           handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />
           </InfiniteScroll>) }
         {postTab === "movies" && (

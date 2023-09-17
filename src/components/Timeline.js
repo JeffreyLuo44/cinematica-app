@@ -14,6 +14,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
 
   const [showImageTrashIcon, setShowImageTrashIcon] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+  const [postWidth, setPostWidth] = useState(0);
   const [isCreateSpoilerPost, setIsCreateSpoilerPost] = useState(false);
 
   const [moviesTaggedCreatePost, setMoviesTaggedCreatePost] = useState([]);
@@ -41,6 +42,13 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postTab]);
 
+  const handleToggleImageTrashIcon = (event) => {
+    event.stopPropagation();
+    if (showImageTrashIcon === true)
+      setShowImageTrashIcon(false);
+    else
+      setShowImageTrashIcon(true);
+  }
 
   const handleToggleMovieDetails = (id) => {
     console.log(id);
@@ -61,12 +69,9 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
       alert("You must tag at least one movie to post");
       return;
     }
-    console.log("Post!");
-    console.log(imageFile);
     if (imageFile !== null) {
       const formData = new FormData();
-      formData.append('imageFile', imageFile); 
-      console.log(formData);
+      formData.append('imageFile', imageFile);
       fetch(apiUrlPrefix + 'posts/upload', {
         method: 'POST',
         headers: {
@@ -112,7 +117,6 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
         return response.json().then(data => {
           let updatedPosts = [data, ...posts];
           setPosts(updatedPosts);
-          console.log(data);
           //Reset create post states
           setCreatePostText('');
           setSearchTag('');
@@ -250,11 +254,19 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
   const getPostsTimeline = async (tab, page) => {
     setPostTab(tab);
     let fetchUrl = "";
+    let headers = null;
     if (tab === "allposts"){
       fetchUrl = apiUrlPrefix + 'posts/all/' + page  + '?userId=' + userId;
+      headers = {
+        'Content-Type': 'application/json'
+      };
     } 
     else if (tab === "following"){
       fetchUrl = apiUrlPrefix + 'posts/following/' + userId + '/' + page;
+      headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`,
+      }
     }
     else {
       setPosts([]);
@@ -264,18 +276,13 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
     //Get particular page of post from the server
     await fetch(fetchUrl, {
       method: 'GET',
-      headers: {
-      'Content-Type': 'application/json'
-      },
+      headers: headers,
     })
     .then(response => {
       if (response.ok) { // Check if the response status code is in the 2xx range
           return response.json().then(data => {
             if (data.length > 0 && postTab === tab){
-              console.log(data);
-              console.log(page);
               let updatedPosts = [...posts, ...data];
-              console.log(updatedPosts);
               setPosts(updatedPosts);
               setPostPage(page + 1);
             } else if (data.length > 0 && postTab !== tab) {
@@ -312,6 +319,10 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
     .catch(error => {
         console.error('Error during getting user details', error);
     });
+  }
+
+  const loadPostWidth = () => {
+    setPostWidth(document.getElementById("image-preview").clientWidth);
   }
 
   return (
@@ -366,9 +377,10 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
             </div>
           </div>
           {/* Display image preview */}
-          {imageFile && <div className="image-preview-container" onMouseEnter={() => setShowImageTrashIcon(true)} onMouseLeave={() => setShowImageTrashIcon(false)}>
+          {imageFile && <div className="image-preview-container" id="image-preview" onLoad={() => loadPostWidth()} onMouseEnter={() => setShowImageTrashIcon(true)} onMouseLeave={() => setShowImageTrashIcon(false)}
+          onTouchStart={(e) => handleToggleImageTrashIcon(e)}>
             {showImageTrashIcon === true && <div className="post__delete-icon"><i class="fa fa-trash" aria-hidden="true" onClick={() => setImageFile(null)}></i></div>}
-            <div className="image-preview-wrapper"><br/><img src={URL.createObjectURL(imageFile)} alt="Selected" className="image-preview" /></div>
+            <div className="image-preview-wrapper"><br/><img src={URL.createObjectURL(imageFile)} alt="Selected" className="image-preview"  style={{ maxHeight: postWidth * 1.5, width: postWidth }} /></div>
           </div>}
           <div className="post__controls">
             <div>
@@ -396,7 +408,6 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
             dataLength={posts.length}
             next={() => getPostsTimeline(postTab, postPage)}
             hasMore={true}
-            // loader={<h4>Loading...</h4>}
           >
           <Posts idToken={idToken} userId={userId} postTab={postTab} posts={posts} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} 
           handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />

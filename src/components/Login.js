@@ -12,7 +12,6 @@ const Login = ({setIdToken, setUserId, setPage, username, setUsername}) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Login!");
     // Send login data to server
     fetch(apiUrlPrefix + 'auth/login', {
       method: 'POST',

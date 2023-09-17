@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { DateTime } from 'luxon';
-// Oppenheimer movie id: 872585
-// Spider-Man: Across the Spiderverse movie id: 569094
-const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage, replies, setReplies, replyPage, setReplyPage, viewReplies, setViewReplies, handleViewProfile, handleToggleMovieDetails, profileUsername, profilePicture}) => {
+
+const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies, setReplies, replyPage, setReplyPage, viewReplies, setViewReplies, handleViewProfile, handleToggleMovieDetails, profileUsername, profilePicture}) => {
   const apiUrlPrefix = process.env.REACT_APP_API_URL_PREFIX;
   const [selectedPost, setSelectedPost] = useState([]);
   const [selectedPostIndex, setSelectedPostIndex] = useState("none");
@@ -15,12 +14,6 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
   const [showPostImageTrashIcon, setShowPostImageTrashIcon] = useState(-1);
   const [showReplyImageTrashIcon, setShowReplyImageTrashIcon] = useState(-1);
   const [postWidth, setPostWidth] = useState(0);
-  // const [taggedMovieForPostSearch, setTaggedMovieForPostSearch] = useState([]);
-
-  useEffect(() => {
-    console.log(showPostImageTrashIcon);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showPostImageTrashIcon]);
 
   const handleTogglePostImageTrashIcon = (id, event) => {
     event.stopPropagation();
@@ -40,14 +33,8 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
 
   const handleToggleReplies = (index) => {
     setCreateReplyText('');
-    console.log(posts);
-    console.log(index);
     if (index !== "none"){
-      // handleTempRemoveSpoilerMessage(index);
       const selectedPostFromPosts = posts[index];
-      // /* Remove the trash icon when viewing Replies of your own post */
-      // if (selectedPostFromPosts.lastIndexOf("post__delete-icon") !== -1)
-      //   selectedPostFromPosts[selectedPostFromPosts.lastIndexOf("post__delete-icon")] = "hideTrashIcon";
       setSelectedPost(selectedPostFromPosts);
       setSelectedPostIndex(index);
       getReplies(selectedPostFromPosts.post.postId, 1);
@@ -58,11 +45,6 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
       setSelectedPostIndex(null);
       setViewPost(false);
       setViewReplies(false);
-      // Restore post to hiding the trash icon to prevent error
-      const restorePosts = [...posts];
-      // let lastIndex = restorePosts[selectedPostIndex].lastIndexOf("hideTrashIcon") !== -1 ? restorePosts[selectedPostIndex].lastIndexOf("hideTrashIcon") : restorePosts[selectedPostIndex].lastIndexOf("post__delete-icon");
-      // restorePosts[selectedPostIndex][lastIndex] = "hideTrashIcon";
-      setPosts(restorePosts);
     }
   };
 
@@ -81,7 +63,6 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
                 setReplies(data);
               } else {
                 let updatedReplies = [...replies, ...data];
-                console.log(updatedReplies);
                 setReplies(updatedReplies);
                 setReplyPage(replyPage + 1);
               }
@@ -118,9 +99,9 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
         alert("Sign in to reply");
         return;
       }
-      // Post creation
+      // Reply creation
       const date = new Date();
-      // Send post data to server
+      // Send reply data to server
       fetch(apiUrlPrefix + 'replies', {
         method: 'POST',
         headers: {
@@ -287,7 +268,6 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
           // Local update to the like button
           const postIndex = posts.findIndex(post => post.post.postId === postId);
           if (postIndex !== -1 && selectedPostIndex === "none") {
-            console.log(postIndex);
             const updatedPosts = [...posts];
             updatedPosts[postIndex] = {...updatedPosts[postIndex], youLike: !updatedPosts[postIndex].youLike};
             if (updatedPosts[postIndex].youLike === true)

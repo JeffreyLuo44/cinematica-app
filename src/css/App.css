@@ -469,10 +469,6 @@ textarea.post__text {
   padding-bottom: 1.5rem;
 }
 
-.follow-list__item-user {
-
-}
-
 .image-preview-container {
   position: relative;
 }
@@ -618,7 +614,7 @@ textarea.post__text {
   .left-column {
     display: none;
   }
-  
+
  .right-column {
     width: 100%;
  } 

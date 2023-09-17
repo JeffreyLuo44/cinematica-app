@@ -108,7 +108,6 @@ const VerifyRegistration = ({setPage, email, username, setUsername}) => {
 
   return (
     <div>
-      {/* <header>  </header> */}
       <div className="container">
         <div className="left-column">
            <div className="register__background">

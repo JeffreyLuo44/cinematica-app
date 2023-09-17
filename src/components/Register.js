@@ -22,7 +22,6 @@ const Register = ({setPage, email, setEmail, username, setUsername}) => {
       for (var i = 0; i < errors.length; i++)
         alert(errors[i]);
     } else {
-      console.log("Register!");
       // Send register data to server
       fetch(apiUrlPrefix + 'auth/register', {
         method: 'POST',
@@ -53,7 +52,6 @@ const Register = ({setPage, email, setEmail, username, setUsername}) => {
 
   return (
     <div>
-      {/* <header>  </header> */}
       <div className="container">
         <div className="left-column">
           <div className="register__background">
