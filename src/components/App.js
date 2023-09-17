@@ -15,8 +15,6 @@ function App() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
 
-  // const [mockPosts, setMockPosts] = useState([]);
-  // const [mockReplies, setMockReplies] = useState("");
   // const [mockUser] = useState("a33c0775-1406-4cc3-81ec-16151ecc4ade");
   // const [otherMockUser] = useState("93cfcbd6-54b6-4961-bec5-0cf6e0a81917");
   // const [otherMockUser2] = useState("e8f2aa40-b1a8-46f2-81c3-4e0dbc3e4f9d");

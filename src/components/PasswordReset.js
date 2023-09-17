@@ -77,9 +77,6 @@ const ResetPassword = ({setPage}) => {
 
   return (
     <div>
-      <header>  
-
-      </header>
       <div className="container">
         <div className="left-column">
           <div className="login__background">

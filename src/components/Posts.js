@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { DateTime } from 'luxon';
 // Oppenheimer movie id: 872585
@@ -15,6 +15,27 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
   const [showReplyImageTrashIcon, setShowReplyImageTrashIcon] = useState(-1);
   const [postWidth, setPostWidth] = useState(0);
   // const [taggedMovieForPostSearch, setTaggedMovieForPostSearch] = useState([]);
+
+  useEffect(() => {
+    console.log(showPostImageTrashIcon);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showPostImageTrashIcon]);
+
+  const handleTogglePostImageTrashIcon = (id, event) => {
+    event.stopPropagation();
+    if (showPostImageTrashIcon !== id)
+      setShowPostImageTrashIcon(id);
+    else
+      setShowPostImageTrashIcon(-1);
+  }
+
+  const handleToggleReplyImageTrashIcon = (id, event) => {
+    event.stopPropagation();
+    if (showReplyImageTrashIcon !== id)
+      setShowReplyImageTrashIcon(id);
+    else
+      setShowReplyImageTrashIcon(-1);
+  }
 
   const handleToggleReplies = (index) => {
     setCreateReplyText('');
@@ -62,8 +83,8 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
                 console.log(updatedReplies);
                 setReplies(updatedReplies);
                 setReplyPage(replyPage + 1);
-                setViewReplies(true);
               }
+              setViewReplies(true);
             });
         } else {
             alert(response.title);
@@ -114,7 +135,7 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
       })
       .then(response => {
         if (response.ok) { // Check if the response status code is in the 2xx range
-          getReplies(postId, replyPage);
+          getReplies(postId, 1);
           //Reset create reply states
           setCreateReplyText('');
         } else {
@@ -173,6 +194,7 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
     }
   
     const getPostsByTaggedMovie = (id, page) => {
+      document.getElementById("search-posts-results").style.visibility = "hidden";
       try {
         fetch('https://localhost:53134/api/posts/search/' + id + '/' + page, {
           method: 'GET',
@@ -190,7 +212,6 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
                 setPosts(updatedPosts);
               }
               setPostPage(page + 1);
-              document.getElementById("search-posts-results").style.visibility = "hidden";
             })
           }
           else {
@@ -307,9 +328,11 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
           if (response.ok) {
             let updatedPosts = [...posts];
             const postIndex = posts.findIndex(post => post.post.postId === id);
+            updatedPosts.splice(postIndex, 1);
+            setPosts(updatedPosts);
+            // Go back to list of posts if viewing selected post
             if (postIndex !== -1 && selectedPostIndex === "none") {
-              updatedPosts.splice(postIndex, 1);
-              setPosts(updatedPosts);
+   
             }
             else {
               setViewPost(false);
@@ -380,7 +403,8 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
         {/* Posts, mapped out */}
         {viewPost === false && posts.length > 0 &&
            posts.map((post, index) => (
-              <div className="post" id={"post-" + index} onLoad={() => loadPostWidth(index)} onMouseEnter={() => setShowPostImageTrashIcon(post.post.postId)} onMouseLeave={() => setShowPostImageTrashIcon(-1)}>
+              <div className="post" id={"post-" + index} onLoad={() => loadPostWidth(index)} onMouseEnter={() => setShowPostImageTrashIcon(post.post.postId)} onMouseLeave={() => setShowPostImageTrashIcon(-1)}
+              onTouchStart={(e) => handleTogglePostImageTrashIcon(post.post.postId, e)}>
                   <div className="post__details">
                       <div className="post__author-container">
                       <div className="cinematica__profile-circle" onClick={() => handleViewProfile(post.post.userId)}><img src={post.profilePicture} alt={''} className="post-image" /></div>
@@ -394,7 +418,7 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
                   </div>
                   {showPostImageTrashIcon === post.post.postId && post.post.userId === userId && <div className="post__delete-icon" onClick={() => handleDeletePost(post.post.postId)}><i class="fa fa-trash" aria-hidden="true"></i></div>}
                   {post.post.isSpoiler === false || post.post.userId === userId ? <p className="post-content">{post.post.body}</p> : <p className="post-content" onClick={() => handleTempRemoveSpoilerMessage(index)}>Warning: Potential spoilers! Click this text or "Replies" to reveal...</p>}
-                  {(post.post.isSpoiler === false || post.post.userId === userId) && <img src={post.post.image} alt={''} className="post-image" style={{ maxHeight: postWidth * 1.5, width: postWidth }}/>}
+                  {(post.post.isSpoiler === false || post.post.userId === userId) && <img src={post.post.image} alt={''} className="post-image" style={{ maxHeight: postWidth * 1.5, width: postWidth, transform: "translate(-1.2rem)"}}/>}
                   <div className="post-movie">
                     {post.movies.map((movie, index) => (
                       <span onClick={() => handleToggleMovieDetails(movie.id)}><i class='fa fa-film'></i> {movie.title} ({movie.releaseYear})</span>
@@ -409,7 +433,8 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
           {/* Selected post with reply section */}
           {viewPost === true && (<div>
             <button className="back" onClick={() => handleToggleReplies("none")}><i class='fa fa-arrow-left'></i>&emsp;Back</button>
-            <div className="post" onMouseEnter={() => setShowPostImageTrashIcon(selectedPost.post.postId)} onMouseLeave={() => setShowPostImageTrashIcon(-1)}>
+            <div className="post" onMouseEnter={() => setShowPostImageTrashIcon(selectedPost.post.postId)} onMouseLeave={() => setShowPostImageTrashIcon(-1)}
+            onTouchStart={(e) => handleTogglePostImageTrashIcon(selectedPost.post.postId, e)}>
               <div className="post__details">
                   <div className="post__author-container">
                   <div className="cinematica__profile-circle" onClick={() => handleViewProfile(selectedPost.post.userId)}><img src={selectedPost.profilePicture} alt={''} className="post-image" /></div>
@@ -421,9 +446,9 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
                     <p className="post-date">{getFormattedPostCreatedAt(selectedPost.post.createdAt)}</p>
                   </div>
               </div>
-              {selectedPost.post.postId === showPostImageTrashIcon && selectedPost.post.userId === userId && <div className="post__delete-icon" onClick={() => handleDeletePost(selectedPost.post.postId)}><i class="fa fa-trash" aria-hidden="true"></i></div>}
+              {selectedPost.post.postId === showPostImageTrashIcon && selectedPost.post.userId === userId && <div className="post__delete-icon" onClick={() => handleDeletePost(selectedPost.post.postId)} onTouchStart={() => handleDeletePost(selectedPost.post.postId)}><i class="fa fa-trash" aria-hidden="true"></i></div>}
               <p className="post-content">{selectedPost.post.body}</p>
-              {<img src={selectedPost.post.image} alt={''} className="post-image" />}
+              {<img src={selectedPost.post.image} alt={''} className="post-image" style={{ maxHeight: postWidth * 1.5, width: postWidth, transform: "translate(-1.2rem)" }} />}
               <div className="post-movie">
                 {selectedPost.movies.map((movie, index) => (
                   <span onClick={() => handleToggleMovieDetails(movie.id)}><i class='fa fa-film'></i> {movie.title} ({movie.releaseYear})</span>
@@ -449,7 +474,8 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
    
             {/* Replies with selected post, mapped out */}
             {viewReplies === true && replies.map((reply, index) => (
-                <div className="post" onMouseEnter={() => setShowReplyImageTrashIcon(reply.reply.replyId)} onMouseLeave={() => setShowPostImageTrashIcon(-1)}>
+                <div className="post" onMouseEnter={(e) => handleToggleReplyImageTrashIcon(reply.reply.replyId, e)} onMouseLeave={(e) => handleToggleReplyImageTrashIcon(-1, e)}
+                onTouchStart={(e) => handleToggleReplyImageTrashIcon(reply.reply.replyId, e)}>
                   <div className="post__details">
                       <div className="post__author-container">
                       <div className="cinematica__profile-circle" onClick={() => handleViewProfile(reply.reply.userId)}><img src={reply.profilePicture !== undefined && reply.profilePicture !== '' ? reply.profilePicture : profilePicture} alt={''} className="post-image" /></div>
@@ -461,7 +487,7 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
                       <p className="post-date">{getFormattedPostCreatedAt(reply.reply.createdAt)}</p>
                       </div>
                   </div>
-                  {reply.reply.replyId === showReplyImageTrashIcon && reply.reply.userId === userId && <div className="post__delete-icon" onClick={() => handleDeleteReply(reply.reply.replyId)}><i class="fa fa-trash" aria-hidden="true"></i></div>}
+                  {reply.reply.replyId === showReplyImageTrashIcon && reply.reply.userId === userId && <div className="post__delete-icon" onClick={() => handleDeleteReply(reply.reply.replyId)} onTouchStart={() => handleDeleteReply(reply.reply.replyId)}><i class="fa fa-trash" aria-hidden="true"></i></div>}
                   <p className="post-content">{reply.reply.body}</p>
                   <div className="post-stats">
                     {reply.youLike === false ? <div className="post-likes" onClick={() => handleLikeReply(reply.reply.replyId)}><i class='	fa fa-heart-o'></i> {reply.likesCount}</div> : <div className="post-likes" onClick={() => handleLikeReply(reply.reply.replyId)}><i class='	fa fa-heart'></i> {reply.likesCount}</div>}
