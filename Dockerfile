@@ -6,6 +6,7 @@ EXPOSE 3000
 WORKDIR /usr/src/app
 
 COPY package*.json /usr/src/app/
+COPY .env.production /usr/src/app/
 ADD public /usr/src/app/public
 ADD src /usr/src/app/src
 
