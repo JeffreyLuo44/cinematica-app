@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// Oppenheimer movie id: 872585
-// Spider-Man: Across the Spiderverse movie id: 569094
+
 const MovieDetails = ({idToken, userId, movieId, handleToggleMovieDetails}) => {
     const apiUrlPrefix = process.env.REACT_APP_API_URL_PREFIX;
     const [movieTab, setMovieTab] = useState("overview");
