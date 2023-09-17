@@ -118,6 +118,9 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
       .then(response => {
         if (response.ok) { // Check if the response status code is in the 2xx range
           getReplies(postId, 1);
+          let updatedSelectedPost = selectedPost;
+          updatedSelectedPost.commentsCount = updatedSelectedPost.commentsCount + 1;
+          setSelectedPost(updatedSelectedPost);
           //Reset create reply states
           setCreateReplyText('');
         } else {
@@ -190,7 +193,6 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
                 setPosts(data);
               } else {
                 let updatedPosts = [...posts, ...data];
-                console.log(updatedPosts);
                 setPosts(updatedPosts);
               }
               setPostPage(page + 1);
@@ -267,7 +269,7 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
         if (response.ok) { // Check if the response status code is in the 2xx range
           // Local update to the like button
           const postIndex = posts.findIndex(post => post.post.postId === postId);
-          if (postIndex !== -1 && selectedPostIndex === "none") {
+          if (postIndex !== 1) {
             const updatedPosts = [...posts];
             updatedPosts[postIndex] = {...updatedPosts[postIndex], youLike: !updatedPosts[postIndex].youLike};
             if (updatedPosts[postIndex].youLike === true)
@@ -275,8 +277,7 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
             else
               updatedPosts[postIndex] = {...updatedPosts[postIndex], likesCount: updatedPosts[postIndex].likesCount - 1};
             setPosts(updatedPosts);
-          }
-          else {
+     
             let updatedSelectedPost = selectedPost;
             updatedSelectedPost = {...updatedSelectedPost, youLike: !updatedSelectedPost.youLike};
             if (updatedSelectedPost.youLike === true)
