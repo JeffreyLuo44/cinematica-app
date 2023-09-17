@@ -18,16 +18,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Node.js test build ${{ matrix.node-version }}
+    - name: Set up Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build
+        
+    - name: Install packages
+      run: npm ci
+      
+    - name: Test building the web app
+      run: npm run build
 
     - name: Zip files ready for upload
-    - run: zip -r output.zip public src .dockerignore Dockerfile package*.json .env.production
+      run: zip -r output.zip public src .dockerignore Dockerfile package*.json .env.production
 
     - name: Upload to S3 front-end bucket
       uses: a-sync/s3-uploader@1b1020511c685aeb5be20f23190d2d1b63ab19a6
