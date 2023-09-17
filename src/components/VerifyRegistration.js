@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 const VerifyRegistration = ({setPage, email, username, setUsername}) => {
+  const apiUrlPrefix = process.env.REACT_APP_API_URL_PREFIX;
   const [otpEntry1, setOTPEntry1] = useState('');
   const [otpEntry2, setOTPEntry2] = useState('');
   const [otpEntry3, setOTPEntry3] = useState('');
@@ -12,7 +13,7 @@ const VerifyRegistration = ({setPage, email, username, setUsername}) => {
     e.preventDefault();
     console.log("OTP: " + otpEntry1 + otpEntry2 + otpEntry3 + otpEntry4 + otpEntry5 + otpEntry6);
     // Send OTP data to server
-    fetch('https://localhost:53134/api/auth/confirm-registration', {
+    fetch(apiUrlPrefix + 'auth/confirm-registration', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -40,7 +41,7 @@ const VerifyRegistration = ({setPage, email, username, setUsername}) => {
 
   const handleResendOTP = () => {
     // Send OTP data to server
-    fetch('https://localhost:53134/api/auth/resend-confirmation-code', {
+    fetch(apiUrlPrefix + 'auth/resend-confirmation-code', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

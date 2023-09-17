@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 const Register = ({setPage, email, setEmail, username, setUsername}) => {
+  const apiUrlPrefix = process.env.REACT_APP_API_URL_PREFIX;
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
@@ -23,7 +24,7 @@ const Register = ({setPage, email, setEmail, username, setUsername}) => {
     } else {
       console.log("Register!");
       // Send register data to server
-      fetch('https://localhost:53134/api/auth/register', {
+      fetch(apiUrlPrefix + 'auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

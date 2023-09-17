@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 const ResetPassword = ({setPage}) => {
+  const apiUrlPrefix = process.env.REACT_APP_API_URL_PREFIX;
   const [resetStage, setResetStage] = useState('1');
   const [email, setEmail] = useState('');
   const [token, setToken] = useState('');
@@ -9,7 +10,7 @@ const ResetPassword = ({setPage}) => {
   const handleNavToStage2 = (e) => {
     e.preventDefault();
     // Send email data to server
-    fetch('https://localhost:53134/api/auth/request-password-reset', {
+    fetch(apiUrlPrefix + 'auth/request-password-reset', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

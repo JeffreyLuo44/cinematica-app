@@ -4,6 +4,7 @@ import Posts from './Posts';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUsername  }) => {  
+  const apiUrlPrefix = process.env.REACT_APP_API_URL_PREFIX;
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [userDetails, setUserDetails] = useState([]);
 
@@ -66,7 +67,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
       const formData = new FormData();
       formData.append('imageFile', imageFile); 
       console.log(formData);
-      fetch('https://localhost:53134/api/posts/upload', {
+      fetch(apiUrlPrefix + 'posts/upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${idToken}`,
@@ -89,7 +90,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
     // Post creation
     const date = new Date();
     // Send post data to server
-    fetch('https://localhost:53134/api/posts', {
+    fetch(apiUrlPrefix + 'posts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -164,7 +165,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
 
     try {
       // Send movie id to server
-      fetch('https://localhost:53134/api/movies/search/' + search, {
+      fetch(apiUrlPrefix + 'movies/search/' + search, {
         method: 'GET',
         headers: {
         'Content-Type': 'application/json'
@@ -191,7 +192,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
       title: title,
       releaseYear: releaseYear
     }
-      fetch('https://localhost:53134/api/movies/' + id, {
+      fetch(apiUrlPrefix + 'movies/' + id, {
         method: 'GET',
         headers: {
         'Content-Type': 'application/json'
@@ -250,10 +251,10 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
     setPostTab(tab);
     let fetchUrl = "";
     if (tab === "allposts"){
-      fetchUrl = 'https://localhost:53134/api/posts/all/' + page  + '?userId=' + userId;
+      fetchUrl = apiUrlPrefix + 'posts/all/' + page  + '?userId=' + userId;
     } 
     else if (tab === "following"){
-      fetchUrl = 'https://localhost:53134/api/posts/following/' + userId + '/' + page;
+      fetchUrl = apiUrlPrefix + 'posts/following/' + userId + '/' + page;
     }
     else {
       setPosts([]);
@@ -293,7 +294,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
 
   const getUserDetails = () => {
     // Send profile id to server
-    fetch('https://localhost:53134/api/users/' + userId, {
+    fetch(apiUrlPrefix + 'users/' + userId, {
       method: 'GET',
       headers: {
       'Content-Type': 'application/json'

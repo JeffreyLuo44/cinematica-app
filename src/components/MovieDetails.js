@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 // Oppenheimer movie id: 872585
 // Spider-Man: Across the Spiderverse movie id: 569094
 const MovieDetails = ({idToken, userId, movieId, handleToggleMovieDetails}) => {
+    const apiUrlPrefix = process.env.REACT_APP_API_URL_PREFIX;
     const [movieTab, setMovieTab] = useState("overview");
     const [movieDetails, setMovieDetails] = useState([]);
     const [isSubscribed, setIsSubscribed] = useState(false);
@@ -9,7 +10,7 @@ const MovieDetails = ({idToken, userId, movieId, handleToggleMovieDetails}) => {
 
     useEffect(() => {
     // Send movie id to server
-    fetch('https://localhost:53134/api/movies/' + movieId, {
+    fetch(apiUrlPrefix + 'movies/' + movieId, {
         method: 'GET',
         headers: {
         'Content-Type': 'application/json'
@@ -46,7 +47,7 @@ const MovieDetails = ({idToken, userId, movieId, handleToggleMovieDetails}) => {
             return;
         }
         // Send id data to server
-        fetch('https://localhost:53134/api/users/add-movie', {
+        fetch(apiUrlPrefix + 'users/add-movie', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -75,7 +76,7 @@ const MovieDetails = ({idToken, userId, movieId, handleToggleMovieDetails}) => {
 
     const handleRemoveMovie = () => {
         // Send id data to server
-        fetch('https://localhost:53134/api/users/remove-movie', {
+        fetch(apiUrlPrefix + 'users/remove-movie', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -103,7 +104,7 @@ const MovieDetails = ({idToken, userId, movieId, handleToggleMovieDetails}) => {
     }
 
     const getMovieList =() => {
-        fetch('https://localhost:53134/api/users/movies/' + userId, {
+        fetch(apiUrlPrefix + 'users/movies/' + userId, {
         method: 'GET',
         headers: {
         'Content-Type': 'application/json'

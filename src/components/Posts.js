@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 // Oppenheimer movie id: 872585
 // Spider-Man: Across the Spiderverse movie id: 569094
 const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage, replies, setReplies, replyPage, setReplyPage, viewReplies, setViewReplies, handleViewProfile, handleToggleMovieDetails, profileUsername, profilePicture}) => {
+  const apiUrlPrefix = process.env.REACT_APP_API_URL_PREFIX;
   const [selectedPost, setSelectedPost] = useState([]);
   const [selectedPostIndex, setSelectedPostIndex] = useState("none");
   const [viewPost, setViewPost] = useState(false);
@@ -66,7 +67,7 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
   };
 
   const getReplies = (postId, replyPage) => {
-    fetch('https://localhost:53134/api/posts/ ' + postId + '/replies/' + replyPage + '?userId=' + userId, {
+    fetch(apiUrlPrefix + 'posts/ ' + postId + '/replies/' + replyPage + '?userId=' + userId, {
       method: 'GET',
       headers: {
       'Content-Type': 'application/json'
@@ -120,7 +121,7 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
       // Post creation
       const date = new Date();
       // Send post data to server
-      fetch('https://localhost:53134/api/replies', {
+      fetch(apiUrlPrefix + 'replies', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -174,7 +175,7 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
       }
       document.getElementById("search-posts-results").style.visibility = "visible";
       try {
-        fetch('https://localhost:53134/api/movies/withPosts/' + search, {
+        fetch(apiUrlPrefix + 'movies/withPosts/' + search, {
           mathod: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -196,7 +197,7 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
     const getPostsByTaggedMovie = (id, page) => {
       document.getElementById("search-posts-results").style.visibility = "hidden";
       try {
-        fetch('https://localhost:53134/api/posts/search/' + id + '/' + page, {
+        fetch(apiUrlPrefix + 'posts/search/' + id + '/' + page, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -236,7 +237,7 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
         return;
       }
       // Send id data to server
-      fetch('https://localhost:53134/api/replies/like/' + userId + '/' + replyId, {
+      fetch(apiUrlPrefix + 'replies/like/' + userId + '/' + replyId, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -274,7 +275,7 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
         return;
       }
       // Send id data to server
-      fetch('https://localhost:53134/api/posts/like/' + userId + '/' + postId, {
+      fetch(apiUrlPrefix + 'posts/like/' + userId + '/' + postId, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -318,7 +319,7 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
 
     const handleDeletePost = (id) => {
       try {
-        fetch('https://localhost:53134/api/posts/' + id, {
+        fetch(apiUrlPrefix + 'posts/' + id, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -350,7 +351,7 @@ const Posts = ({idToken, userId, postTab, posts, setPosts, postPage, setPostPage
 
     const handleDeleteReply = (id) => {
       try {
-        fetch('https://localhost:53134/api/replies/' + id, {
+        fetch(apiUrlPrefix + 'replies/' + id, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',

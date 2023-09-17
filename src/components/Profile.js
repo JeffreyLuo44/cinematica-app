@@ -4,6 +4,7 @@ import Posts from './Posts';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUserId, handleViewProfile, username, setUsername}) => {
+  const apiUrlPrefix = process.env.REACT_APP_API_URL_PREFIX;
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [userDetails, setUserDetails] = useState([]);
   const [profileDetails, setProfileDetails] = useState([]);
@@ -60,7 +61,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
 
   const getProfileDetails = () => {
       // Send profile id to server
-      fetch('https://localhost:53134/api/users/' + viewProfileUserId, {
+      fetch(apiUrlPrefix + 'users/' + viewProfileUserId, {
         method: 'GET',
         headers: {
         'Content-Type': 'application/json'
@@ -81,7 +82,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
   }
 
   const getFollowerList = (id, profileView) => {
-    fetch('https://localhost:53134/api/users/followers/' + id, {
+    fetch(apiUrlPrefix + 'users/followers/' + id, {
       method: 'GET',
       headers: {
       'Content-Type': 'application/json'
@@ -103,7 +104,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
   }
 
   const getFollowingList = (id, profileView) => {
-    fetch('https://localhost:53134/api/users/following/' + id, {
+    fetch(apiUrlPrefix + 'users/following/' + id, {
       method: 'GET',
       headers: {
       'Content-Type': 'application/json'
@@ -133,7 +134,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
   }
 
   const getMovieList =() => {
-    fetch('https://localhost:53134/api/users/movies/' + viewProfileUserId, {
+    fetch(apiUrlPrefix + 'users/movies/' + viewProfileUserId, {
       method: 'GET',
       headers: {
       'Content-Type': 'application/json'
@@ -170,7 +171,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
       return;
     }
     // Send id data to server
-    fetch('https://localhost:53134/api/users/follow', {
+    fetch(apiUrlPrefix + 'users/follow', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -198,7 +199,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
 
   const handleUnfollowUser = (user_id, follower_id) => {
     // Send id data to server
-    fetch('https://localhost:53134/api/users/unfollow', {
+    fetch(apiUrlPrefix + 'users/unfollow', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -239,7 +240,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
     const formData = new FormData();
     formData.append('UserId', userId); 
     formData.append('File', selectedImageFile); 
-    fetch('https://localhost:53134/api/users/set-cover-picture', {
+    fetch(apiUrlPrefix + 'users/set-cover-picture', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${idToken}`,
@@ -276,7 +277,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
     const formData = new FormData();
     formData.append('UserId', userId); 
     formData.append('File', selectedImageFile); 
-    fetch('https://localhost:53134/api/users/set-profile-picture', {
+    fetch(apiUrlPrefix + 'users/set-profile-picture', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${idToken}`,
@@ -314,7 +315,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
     setPostTab(tab);
     setReplies([]);
     //Get particular page of post from the server
-    await fetch('https://localhost:53134/api/users/posts/' + viewProfileUserId + '/' + page, {
+    await fetch(apiUrlPrefix + 'users/posts/' + viewProfileUserId + '/' + page, {
       method: 'GET',
       headers: {
       'Content-Type': 'application/json'
@@ -348,7 +349,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
     setPostTab(tab);
     setPosts([]);
       //Get particular page of post from the server
-      fetch('https://localhost:53134/api/users/replies/' + viewProfileUserId + '/' + page, {
+      fetch(apiUrlPrefix + 'users/replies/' + viewProfileUserId + '/' + page, {
         method: 'GET',
         headers: {
         'Content-Type': 'application/json'
@@ -381,7 +382,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
 
   const getUserDetails = () => {
     // Send profile id to server
-    fetch('https://localhost:53134/api/users/' + userId, {
+    fetch(apiUrlPrefix + 'users/' + userId, {
       method: 'GET',
       headers: {
       'Content-Type': 'application/json'

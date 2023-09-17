@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const Login = ({setIdToken, setUserId, setPage, username, setUsername}) => {
+  const apiUrlPrefix = process.env.REACT_APP_API_URL_PREFIX;
   const [password, setPassword] = useState('');
 
   useEffect(() => {
@@ -13,7 +14,7 @@ const Login = ({setIdToken, setUserId, setPage, username, setUsername}) => {
     e.preventDefault();
     console.log("Login!");
     // Send login data to server
-    fetch('https://localhost:53134/api/auth/login', {
+    fetch(apiUrlPrefix + 'auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -44,7 +45,6 @@ const Login = ({setIdToken, setUserId, setPage, username, setUsername}) => {
 
   return (
     <div>
-      {/* <header>  </header> */}
       <div className="container">
         <div className="left-column">
           <div className="login__background">
