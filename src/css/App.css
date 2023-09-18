@@ -615,12 +615,56 @@ textarea.post__text {
   width: auto;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1024px) {
+  .container {
+    box-sizing: border-box;
+  }
+
   .left-column {
     display: none;
   }
 
  .right-column {
     width: 100%;
+    margin: 1rem;
  } 
+
+ button.standard, input[type=text], input[type=password], input[type=email] {
+  width: 100%;
+ }
+
+ .cinematica__header-upper {
+    display: block;
+ }
+
+ .cinematica__header-upper div {
+    justify-content: space-evenly;
+  }
+
+  .cinematica__header-upper p {
+    padding-top: 1rem;
+    text-align: center;
+  }
+
+  .TMDB-logo {
+    height: 30px; /* Adjust this height as needed */
+  }
+
+  .fa.fa-home {
+    font-size: 30px;
+  }
+}
+
+@media screen and (max-width: 512px) {
+  .cinematica__header-upper p {
+    padding-top: 0.5rem;
+  }
+
+  .TMDB-logo {
+    height: 15px; /* Adjust this height as needed */
+  }
+
+  .fa.fa-home {
+    font-size: 15px;
+  }
 }
