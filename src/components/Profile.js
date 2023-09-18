@@ -399,6 +399,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
         <div className="cinematica__header-upper">
           <p className="cinematica__logo logo__size-2 logo__colour-2" onClick={() => handleViewTimeline()}>Cinematica</p>
           <div>
+            <img className="TMDB-logo" src="TMDB-logo.svg" alt="" />
             <i class="fa fa-home" aria-hidden="true" onClick={() => handleViewTimeline()}></i>
             {userId !== "" ? <div>
               <p onClick={() => handleViewProfile(userId)}>{username}</p>

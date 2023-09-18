@@ -369,6 +369,8 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
         {/* Pre-posts */}
         {viewPost === false && <div>
           <br/>
+          <i>This product uses the TMDB API but is not endorsed or certified by TMDB</i>
+          <br/> <br/>
           <input type="text" className="searchBar search__timeline" value={searchPostTag} placeholder="Search posts by movie..." onChange={(e) => {setSearchPostTag(e.target.value); searchPostsByMovie(e.target.value);}} /><br/>
         </div>}
         {/* Change class names */}

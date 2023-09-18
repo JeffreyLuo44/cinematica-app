@@ -610,6 +610,11 @@ textarea.post__text {
   padding-bottom: 2rem;
 }
 
+.TMDB-logo {
+  height: 10px; /* Adjust this height as needed */
+  width: auto;
+}
+
 @media screen and (max-width: 768px) {
   .left-column {
     display: none;
