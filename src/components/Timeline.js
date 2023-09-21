@@ -363,7 +363,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
         {/* Create post */}
         {userId !== '' && <form className="form" onSubmit={handleSubmit}>
           <div>
-            <textarea className="post__text" placeholder="What's on your mind?" maxLength={280} value={createPostText} onChange={(e) => setCreatePostText(e.target.value)} required />
+            <textarea className="post__text" placeholder="What's on your mind?" maxLength={1000} value={createPostText} onChange={(e) => setCreatePostText(e.target.value)} required />
             <div>
               <input type="text" className="searchBar search__timeline" value={searchTag} placeholder="Pick movie you're talking about..." onChange={(e) => {setSearchTag(e.target.value); searchMovie(e.target.value);}} /><br/>
             </div>
