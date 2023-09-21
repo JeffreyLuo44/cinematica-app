@@ -253,6 +253,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
 
   const getPostsTimeline = async (tab, page) => {
     setPostTab(tab);
+    setReplies([]);
     let fetchUrl = "";
     let headers = null;
     if (tab === "allposts"){
