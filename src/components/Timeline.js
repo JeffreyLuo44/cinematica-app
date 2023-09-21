@@ -138,7 +138,10 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
   }
 
   const handleLogout = () => {
-    setUsername('');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('idToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('username');
     setPage('login');
   }
 

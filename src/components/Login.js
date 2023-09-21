@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Login = ({setIdToken, setUserId, setPage, username, setUsername}) => {
+const Login = ({setIdToken, setUserId, setRefreshToken, setPage, username, setUsername}) => {
   const apiUrlPrefix = process.env.REACT_APP_API_URL_PREFIX;
   const [password, setPassword] = useState('');
 
@@ -29,6 +29,10 @@ const Login = ({setIdToken, setUserId, setPage, username, setUsername}) => {
         console.log(data.user_id);
         setUserId(data.user_id);
         setIdToken(data.idToken);
+        localStorage.setItem('user_id', data.user_id);
+        localStorage.setItem('idToken', data.idToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem('username', username);
         setPage("timeline");
       } else if (data.message === "User hasn't been verified yet.") {
         setPage("verifyRegistration");

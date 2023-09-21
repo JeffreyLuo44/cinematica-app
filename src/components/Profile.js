@@ -153,7 +153,10 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
   }
 
   const handleLogout = () => {
-    setUsername('');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('idToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('username');
     setPage('login');
   }
 

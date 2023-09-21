@@ -72,6 +72,7 @@ const Register = ({setPage, email, setEmail, username, setUsername}) => {
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required/><br/>
             <br/>
             <label>Password</label> <br></br>
+            <i style={{color: "gray"}}>Must have at least 8 characters <br/> including a number and special character</i><br/>
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}  placeholder="Enter strong password here..." autoComplete="new-password" required /><br/>
             <br/>
             <button className="standard" type="submit">Register</button>
