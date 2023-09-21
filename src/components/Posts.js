@@ -42,6 +42,7 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
       setViewReplies(true);
     } else {
       setSelectedPost([]);
+      setReplies([]);
       setSelectedPostIndex(null);
       setViewPost(false);
       setViewReplies(false);
