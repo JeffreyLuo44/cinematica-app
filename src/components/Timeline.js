@@ -247,6 +247,8 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
         }
     })
     e.target.classList.add("tab--clicked");
+    setPosts([]);
+    setReplies([]);
     setPostPage(1);
     getPostsTimeline(tab, 1);
   }

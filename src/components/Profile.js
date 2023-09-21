@@ -299,9 +299,9 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
         }
     })
     e.target.classList.add("tab--clicked");
+    setPosts([]);
+    setReplies([]);
     if (tab === "movies"){
-      setPosts([]);
-      setReplies([]);
       setPostTab("movies");
     }
     setPostPage(1);
