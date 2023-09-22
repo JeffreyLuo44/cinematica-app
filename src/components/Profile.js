@@ -174,6 +174,8 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
       alert("Sign in to follow!");
       return;
     }
+    setIsFollowed(true);
+    profileDetails.follower_count++;
     // Send id data to server
     fetch(apiUrlPrefix + 'users/follow', {
       method: 'POST',
@@ -202,6 +204,8 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
   }
 
   const handleUnfollowUser = (user_id, follower_id) => {
+    setIsFollowed(false);
+    profileDetails.follower_count--;
     // Send id data to server
     fetch(apiUrlPrefix + 'users/unfollow', {
       method: 'POST',

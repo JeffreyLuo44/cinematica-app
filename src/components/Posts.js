@@ -369,10 +369,10 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
     }
     
     return (<div className="post-container">
-               {<InfiniteScroll
-              dataLength={posts.length}
-              next={() => getPostsByTaggedMovie(taggedMovieIdForPostSearch, postPage)}
-              hasMore={true}
+          {<InfiniteScroll
+        dataLength={posts.length}
+        next={() => getPostsByTaggedMovie(taggedMovieIdForPostSearch, postPage)}
+        hasMore={true}
             />}
         {/* Pre-posts */}
         {viewPost === false && <div>
@@ -387,7 +387,7 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
           {searchPostResults.map((result) => (
             <div key={result.id} onClick={() => handleAddTaggedMovieForPostSearch(result.id, result.title, result.releaseYear)}>{result.title} ({result.releaseYear})</div>
           ))}
-          {searchPostResults.length === 0 && searchPostTag !== "" && <div>No movies with posts found</div>} 
+          {searchPostResults.length === 0 && searchPostTag !== "" && <div>No movies with posts found or finding movies</div>} 
         </div>
         <br/>
         <label for="revealAllSpoilers">Reveal all potential spoiler posts</label>

@@ -199,7 +199,12 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
       title: title,
       releaseYear: releaseYear
     }
-      fetch(apiUrlPrefix + 'movies/' + id, {
+    updatedMoviesTaggedCreatePost.push(newMovieTagged);
+    updatedMoviesIdsTaggedCreatePost.push(id);
+    setMoviesTaggedCreatePost(updatedMoviesTaggedCreatePost);
+    setMoviesIdsTaggedCreatePost(updatedMoviesIdsTaggedCreatePost);
+    // Fetch request would be guaranteed to work because the search worked.
+    fetch(apiUrlPrefix + 'movies/' + id, {
         method: 'GET',
         headers: {
         'Content-Type': 'application/json'
@@ -207,11 +212,6 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
     })
     .then(response => {
         if (response.ok) { // Check if the response status code is in the 2xx range
-          updatedMoviesTaggedCreatePost.push(newMovieTagged);
-          updatedMoviesIdsTaggedCreatePost.push(id);
-          setMoviesTaggedCreatePost(updatedMoviesTaggedCreatePost);
-          setMoviesIdsTaggedCreatePost(updatedMoviesIdsTaggedCreatePost);
-        } else {
 
         }
     })
@@ -373,7 +373,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
               {/* Display search results here */}
               {searchResults.length > 0 && searchTag !== "" ? searchResults.map((result) => (
                 <div key={result.id} onClick={() => handleAddTaggedMovie(result.id, result.title, result.releaseYear)}>{result.title} ({result.releaseYear})</div>
-              )) : <div>No movies found</div>}
+              )) : <div>No movies found or finding movies</div>}
             </div>
             {moviesTaggedCreatePost.length > 0 && <br/>}
             <div className="post-movie-search">

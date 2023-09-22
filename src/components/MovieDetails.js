@@ -45,6 +45,7 @@ const MovieDetails = ({idToken, userId, movieId, handleToggleMovieDetails}) => {
             alert("Sign in to subscribe!");
             return;
         }
+        setIsSubscribed(true);
         // Send id data to server
         fetch(apiUrlPrefix + 'users/add-movie', {
             method: 'POST',
@@ -59,8 +60,7 @@ const MovieDetails = ({idToken, userId, movieId, handleToggleMovieDetails}) => {
         })
         .then(response => {
             if (response.ok) { // Check if the response status code is in the 2xx range
-                getMovieList();
-                checkIfSubscribedMovie();
+
             } else {
                 return response.json().then(data => {
                     console.error('Request failed with status: ' + response.status);
@@ -74,6 +74,7 @@ const MovieDetails = ({idToken, userId, movieId, handleToggleMovieDetails}) => {
     }
 
     const handleRemoveMovie = () => {
+        setIsSubscribed(false);
         // Send id data to server
         fetch(apiUrlPrefix + 'users/remove-movie', {
             method: 'POST',
@@ -88,8 +89,7 @@ const MovieDetails = ({idToken, userId, movieId, handleToggleMovieDetails}) => {
         })
         .then(response => {
             if (response.ok) { // Check if the response status code is in the 2xx range
-                getMovieList();
-                checkIfSubscribedMovie();
+
             } else {
                 return response.json().then(data => {
                     console.error('Request failed with status: ' + response.status);
