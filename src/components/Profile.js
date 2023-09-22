@@ -508,9 +508,9 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
             {followerList.map((follower) => (
             <div className="follow-list__item">
               <div className="follow-list__item-user">
-                <div className="cinematica__profile-circle" onClick={() => alert('test')}></div>
+                <div className="cinematica__profile-circle" onClick={() => handleViewProfile(follower.userId)}></div>
                 <div>
-                    <p className="post-author" onClick={() => alert('test')}>{follower.username}</p>
+                    <p className="post-author" onClick={() => handleViewProfile(follower.userId)}>{follower.username}</p>
                 </div>
               </div>
               {userId !== viewProfileUserId && 
@@ -532,9 +532,9 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
           {followingList.map((following) => (
             <div className="follow-list__item">
               <div className="follow-list__item-user">
-                <div className="cinematica__profile-circle" onClick={() => alert('test')}></div>
+                <div className="cinematica__profile-circle" onClick={() => handleViewProfile(following.userId)}></div>
                 <div>
-                <p className="post-author" onClick={() => alert('test')}>{following.username}</p>
+                <p className="post-author" onClick={() => handleViewProfile(following.userId)}>{following.username}</p>
                 </div>
               </div>
               {userId !== viewProfileUserId && 
