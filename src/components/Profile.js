@@ -8,6 +8,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [userDetails, setUserDetails] = useState([]);
   const [profileDetails, setProfileDetails] = useState([]);
+  const [profileDetailsLoaded, setProfileDetailsLoaded] = useState(false);
   const [followerList, setFollowerList] = useState([]);
   const [followingList, setFollowingList] = useState([]);
   const [ownFollowingList, setOwnFollowingList] = useState([]);
@@ -70,6 +71,8 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
         if (response.ok) { // Check if the response status code is in the 2xx range
             return response.json().then(data => {
               setProfileDetails(data);
+              console.log(data);
+              setProfileDetailsLoaded(true);
             });
         } else {
             alert(response.title);
@@ -330,6 +333,8 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
             } else if (data.length > 0 && postTab !== tab) {
               setPosts(data);
               setPostPage(page + 1);
+            } else {
+              document.getElementById("loadingIndicatorProfilePosts").style.display = "none";
             }
           });
       } else {
@@ -361,6 +366,8 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
               } else if (data.length > 0 && postTab !== tab) {
                 setReplies(data);
                 setReplyPage(page + 1);
+              } else {
+                document.getElementById("loadingIndicatorProfileReplies").style.display = "none";
               }
               setViewReplies(true);
             });
@@ -442,7 +449,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
           <div className="profile__name-photo-container">
             <div className="profile__picture"  onClick={() => {handleSetProfilePicture()}}><img src={profileDetails.profile_picture} alt=""  className="post-image" /></div>
             <div className="profile__username-container">
-              <p className="profile__username"><strong>{profileDetails.username}</strong></p>
+              <p className="profile__username">{ profileDetailsLoaded === true ? <strong>{profileDetails.username}</strong> : <div id="loadingIndicator" class="loading__centre loading__colour-profile"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div> }</p>
             </div>
           </div>
           {/* Follower counts */}
@@ -469,6 +476,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
             dataLength={posts.length}
             next={() => getPostsProfile(postTab, postPage)}
             hasMore={true}
+            loader={<div id="loadingIndicatorProfilePosts" class="loading__centre"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>}
             >
           <Posts idToken={idToken} userId={userId} posts={posts} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} profileUsername={profileDetails.username} profilePicture={profileDetails.profile_picture}
           handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />
@@ -478,6 +486,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
             dataLength={replies.length}
             next={() => getRepliesProfile("replies", replyPage)}
             hasMore={true}
+            loader={<div id="loadingIndicatorProfileReplies" class="loading__centre"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>}
             >
           <Posts idToken={idToken} userId={userId} posts={[]} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} profileUsername={profileDetails.username} profilePicture={profileDetails.profile_picture}
           handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />

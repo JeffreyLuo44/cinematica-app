@@ -294,6 +294,8 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
             } else if (data.length > 0 && postTab !== tab) {
               setPosts(data);
               setPostPage(page + 1);
+            } else {
+              document.getElementById("loadingTimelineIndicator").style.display = "none";
             }
           });
       } else {
@@ -415,6 +417,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
             dataLength={posts.length}
             next={() => getPostsTimeline(postTab, postPage)}
             hasMore={true}
+            loader={<div id="loadingTimelineIndicator" class="loading__centre"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>}
           >
           <Posts idToken={idToken} userId={userId} postTab={postTab} posts={posts} setPosts={setPosts} postPage={postPage} setPostPage={setPostPage} replies={replies} setReplies={setReplies} replyPage={replyPage} setReplyPage={setReplyPage} viewReplies={viewReplies} setViewReplies={setViewReplies} 
           handleViewProfile={handleViewProfile} handleToggleMovieDetails={handleToggleMovieDetails} />

@@ -59,13 +59,15 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
     .then(response => {
         if (response.ok) { // Check if the response status code is in the 2xx range
             return response.json().then(data => {
-              if (replyPage === 1){
+              if (replyPage === 1 && data.length > 0){
                 setReplyPage(2);
                 setReplies(data);
-              } else {
+              } else if (data.length > 0) {
                 let updatedReplies = [...replies, ...data];
                 setReplies(updatedReplies);
                 setReplyPage(replyPage + 1);
+              } else {
+                document.getElementById("loadingIndicatorReplies").style.display = "none";
               }
               setViewReplies(true);
             });
@@ -190,13 +192,14 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
         }).then(response => {
           if (response.ok) {
             response.json().then(data => {
-              if (page === 1){
+              if (data.length > 0 && page === 1){
                 setPosts(data);
-              } else {
+                setPostPage(page + 1);
+              } else if (data.length > 0) {
                 let updatedPosts = [...posts, ...data];
                 setPosts(updatedPosts);
+                setPostPage(page + 1);
               }
-              setPostPage(page + 1);
             })
           }
           else {
@@ -220,6 +223,18 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
         alert("Sign in to like!");
         return;
       }
+      // Local update to the like button
+      const replyIndex = replies.findIndex(reply => reply.reply.replyId === replyId);
+      if (replyIndex !== -1) {
+        const updatedReplies = [...replies];
+        updatedReplies[replyIndex] = {...updatedReplies[replyIndex], youLike: !updatedReplies[replyIndex].youLike};
+        if (updatedReplies[replyIndex].youLike === true)
+          updatedReplies[replyIndex] = {...updatedReplies[replyIndex], likesCount: updatedReplies[replyIndex].likesCount + 1};
+        else
+          updatedReplies[replyIndex] = {...updatedReplies[replyIndex], likesCount: updatedReplies[replyIndex].likesCount - 1};
+        setReplies(updatedReplies);
+      }
+   
       // Send id data to server
       fetch(apiUrlPrefix + 'replies/like/' + userId + '/' + replyId, {
         method: 'PUT',
@@ -230,17 +245,7 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
       })
       .then(response => {
         if (response.ok) { // Check if the response status code is in the 2xx range
-          // Local update to the like button
-          const replyIndex = replies.findIndex(reply => reply.reply.replyId === replyId);
-          if (replyIndex !== -1) {
-            const updatedReplies = [...replies];
-            updatedReplies[replyIndex] = {...updatedReplies[replyIndex], youLike: !updatedReplies[replyIndex].youLike};
-            if (updatedReplies[replyIndex].youLike === true)
-              updatedReplies[replyIndex] = {...updatedReplies[replyIndex], likesCount: updatedReplies[replyIndex].likesCount + 1};
-            else
-              updatedReplies[replyIndex] = {...updatedReplies[replyIndex], likesCount: updatedReplies[replyIndex].likesCount - 1};
-            setReplies(updatedReplies);
-          }
+
         } else {
           return response.json().then(data => {
             console.error('Request failed with status: ' + response.status);
@@ -253,11 +258,31 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
       });
     }
 
-    const handleLikePost = (postId) => {
+    const handleLikePost = async (postId) => {
       if (userId === ''){
         alert("Sign in to like!");
         return;
       }
+      // Local update to the like button
+      const postIndex = posts.findIndex(post => post.post.postId === postId);
+      if (postIndex !== 1) {
+        const updatedPosts = [...posts];
+        updatedPosts[postIndex] = {...updatedPosts[postIndex], youLike: !updatedPosts[postIndex].youLike};
+        if (updatedPosts[postIndex].youLike === true)
+          updatedPosts[postIndex] = {...updatedPosts[postIndex], likesCount: updatedPosts[postIndex].likesCount + 1};
+        else
+          updatedPosts[postIndex] = {...updatedPosts[postIndex], likesCount: updatedPosts[postIndex].likesCount - 1};
+        setPosts(updatedPosts);
+  
+        let updatedSelectedPost = selectedPost;
+        updatedSelectedPost = {...updatedSelectedPost, youLike: !updatedSelectedPost.youLike};
+        if (updatedSelectedPost.youLike === true)
+          updatedSelectedPost = {...updatedSelectedPost, likesCount: updatedSelectedPost.likesCount + 1};
+        else
+          updatedSelectedPost = {...updatedSelectedPost, likesCount: updatedSelectedPost.likesCount - 1};
+        setSelectedPost(updatedSelectedPost);
+      }
+
       // Send id data to server
       fetch(apiUrlPrefix + 'posts/like/' + userId + '/' + postId, {
         method: 'PUT',
@@ -268,25 +293,7 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
       })
       .then(response => {
         if (response.ok) { // Check if the response status code is in the 2xx range
-          // Local update to the like button
-          const postIndex = posts.findIndex(post => post.post.postId === postId);
-          if (postIndex !== 1) {
-            const updatedPosts = [...posts];
-            updatedPosts[postIndex] = {...updatedPosts[postIndex], youLike: !updatedPosts[postIndex].youLike};
-            if (updatedPosts[postIndex].youLike === true)
-              updatedPosts[postIndex] = {...updatedPosts[postIndex], likesCount: updatedPosts[postIndex].likesCount + 1};
-            else
-              updatedPosts[postIndex] = {...updatedPosts[postIndex], likesCount: updatedPosts[postIndex].likesCount - 1};
-            setPosts(updatedPosts);
-     
-            let updatedSelectedPost = selectedPost;
-            updatedSelectedPost = {...updatedSelectedPost, youLike: !updatedSelectedPost.youLike};
-            if (updatedSelectedPost.youLike === true)
-              updatedSelectedPost = {...updatedSelectedPost, likesCount: updatedSelectedPost.likesCount + 1};
-            else
-              updatedSelectedPost = {...updatedSelectedPost, likesCount: updatedSelectedPost.likesCount - 1};
-            setSelectedPost(updatedSelectedPost);
-          }
+
         } else {
           return response.json().then(data => {
             console.error('Request failed with status: ' + response.status);
@@ -450,11 +457,6 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
               <input type="text" className="comment-box__text" value={createReplyText} maxLength={280} placeholder="Write your reply..." onChange={(e) => setCreateReplyText(e.target.value)} required />
               <i class='fa fa-send' onClick={() => handleAddReply(selectedPost.post.postId)}></i>
             </div>
-            {<InfiniteScroll
-              dataLength={replies.length}
-              next={() => getReplies(selectedPost.post.postId, replyPage)}
-              hasMore={true}
-            />}
             </div>)}
    
             {/* Replies with selected post, mapped out */}
@@ -479,6 +481,13 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
                   </div>
               </div>
             ))}
+            
+            {selectedPost.post && <InfiniteScroll
+              dataLength={replies.length}
+              next={() => getReplies(selectedPost.post.postId, replyPage)}
+              hasMore={true}
+              loader={<div id="loadingIndicatorReplies" class="loading__centre"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>}
+            />}
       </div> 
     );
 };
