@@ -238,7 +238,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
     imageInput.click();
   };
 
-  const handleCoverPictureUpload = (e) => {
+  const handleCoverPictureUpload = async (e) => {
     const selectedImageFile = e.target.files[0];
     // Size is given in bytes
     if (selectedImageFile.size / 1024 / 1024 > 1){
@@ -248,7 +248,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
     const formData = new FormData();
     formData.append('UserId', userId); 
     formData.append('File', selectedImageFile); 
-    fetch(apiUrlPrefix + 'users/set-cover-picture', {
+    await fetch(apiUrlPrefix + 'users/set-cover-picture', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${idToken}`,
@@ -274,7 +274,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
   }
 
   // Simulate a click to find an image
-  const handleProfilePictureUpload = (e) => {
+  const handleProfilePictureUpload = async (e) => {
     const selectedImageFile = e.target.files[0];
     // Size is given in bytes
     if (selectedImageFile.size / 1024 / 1024 > 1){
@@ -284,7 +284,7 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
     const formData = new FormData();
     formData.append('UserId', userId); 
     formData.append('File', selectedImageFile); 
-    fetch(apiUrlPrefix + 'users/set-profile-picture', {
+    await fetch(apiUrlPrefix + 'users/set-profile-picture', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${idToken}`,

@@ -59,7 +59,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (userId === ''){
       alert("You must be signed in to create a post");
@@ -72,7 +72,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
     if (imageFile !== null) {
       const formData = new FormData();
       formData.append('imageFile', imageFile);
-      fetch(apiUrlPrefix + 'posts/upload', {
+      await fetch(apiUrlPrefix + 'posts/upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${idToken}`,
@@ -91,11 +91,11 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
     }
   };
 
-  const handleAddPost = (generatedImageFileName) => {
+  const handleAddPost = async (generatedImageFileName) => {
     // Post creation
     const date = new Date();
     // Send post data to server
-    fetch(apiUrlPrefix + 'posts', {
+    await fetch(apiUrlPrefix + 'posts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
