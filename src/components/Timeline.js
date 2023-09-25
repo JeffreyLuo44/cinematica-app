@@ -69,6 +69,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
       alert("You must tag at least one movie to post");
       return;
     }
+    setAddingPost(true);
     if (imageFile !== null) {
       const reader = new FileReader();
       reader.readAsDataURL(imageFile);
@@ -371,7 +372,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
       {movieId >= 0 ? (<MovieDetails idToken={idToken} userId={userId} movieId={movieId} handleToggleMovieDetails={handleToggleMovieDetails} />) :
       (<div className="feed-container">
         {/* Create post */}
-        {userId !== '' && <form className="form" onSubmit={() => {setAddingPost(true); handleSubmit();}}>
+        {userId !== '' && <form className="form" onSubmit={handleSubmit}>
           <div>
             <textarea className="post__text" placeholder="What's on your mind?" maxLength={1000} value={createPostText} onChange={(e) => setCreatePostText(e.target.value)} required />
             <div>

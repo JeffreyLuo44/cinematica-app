@@ -211,6 +211,7 @@ input.searchBar {
 
 .post-container {
   max-width: 100%;
+  overflow-x: hidden;
 }
 
 .cinematica__content {
@@ -685,7 +686,6 @@ textarea.post__text {
 ::placeholder {
   color: var(--color-placeholder);
 }
-
 
 @media screen and (max-width: 1024px) {
   .container {
