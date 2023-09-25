@@ -265,7 +265,7 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
       }
       // Local update to the like button
       const postIndex = posts.findIndex(post => post.post.postId === postId);
-      if (postIndex !== 1) {
+      if (postIndex !== -1) {
         const updatedPosts = [...posts];
         updatedPosts[postIndex] = {...updatedPosts[postIndex], youLike: !updatedPosts[postIndex].youLike};
         if (updatedPosts[postIndex].youLike === true)
@@ -273,6 +273,7 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
         else
           updatedPosts[postIndex] = {...updatedPosts[postIndex], likesCount: updatedPosts[postIndex].likesCount - 1};
         setPosts(updatedPosts);
+        console.log(updatedPosts[postIndex].youLike);
   
         let updatedSelectedPost = selectedPost;
         updatedSelectedPost = {...updatedSelectedPost, youLike: !updatedSelectedPost.youLike};
