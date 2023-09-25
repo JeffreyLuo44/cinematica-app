@@ -682,6 +682,10 @@ textarea.post__text {
   }
 }
 
+::placeholder {
+  color: var(--color-placeholder);
+}
+
 
 @media screen and (max-width: 1024px) {
   .container {

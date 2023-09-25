@@ -11,6 +11,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
   const [createPostText, setCreatePostText] = useState('');
   const [searchTag, setSearchTag] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [addingPost, setAddingPost] = useState(false);
 
   const [showImageTrashIcon, setShowImageTrashIcon] = useState(false);
   const [imageFile, setImageFile] = useState(null);
@@ -130,6 +131,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
           setMoviesIdsTaggedCreatePost([]);
           setImageFile(null);
           setIsCreateSpoilerPost(false);
+          setAddingPost(false);
      });
    } else {
      return response.json().then(data => {
@@ -369,7 +371,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
       {movieId >= 0 ? (<MovieDetails idToken={idToken} userId={userId} movieId={movieId} handleToggleMovieDetails={handleToggleMovieDetails} />) :
       (<div className="feed-container">
         {/* Create post */}
-        {userId !== '' && <form className="form" onSubmit={handleSubmit}>
+        {userId !== '' && <form className="form" onSubmit={() => {setAddingPost(true); handleSubmit();}}>
           <div>
             <textarea className="post__text" placeholder="What's on your mind?" maxLength={1000} value={createPostText} onChange={(e) => setCreatePostText(e.target.value)} required />
             <div>
@@ -406,7 +408,7 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
               <input type="checkbox" value="spoilers" onChange={(e) => setIsCreateSpoilerPost(!isCreateSpoilerPost)} />
             </div>
             <div>
-              <button className="post__button" id="post" type="submit">Post</button>
+              {addingPost === false ? <button className="post__button" id="post" type="submit">Post</button> : <p>Adding post...</p>}
             </div>
           </div>
           <br/>
