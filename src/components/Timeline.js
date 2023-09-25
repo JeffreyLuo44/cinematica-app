@@ -51,7 +51,6 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
   }
 
   const handleToggleMovieDetails = (id) => {
-    console.log(id);
     if (movieId === -1){
       setMovieId(id);
     } else {
@@ -70,22 +69,29 @@ const Timeline = ({setPage, idToken, userId, handleViewProfile, username, setUse
       return;
     }
     if (imageFile !== null) {
-      const formData = new FormData();
-      formData.append('imageFile', imageFile);
-      await fetch(apiUrlPrefix + 'posts/upload', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${idToken}`,
-        },
-        body: formData,
-      })
-        .then(response => response.json())
-        .then(data => {
-          handleAddPost(data.fileName);
+      const reader = new FileReader();
+      reader.readAsDataURL(imageFile);
+      reader.onload = function () {
+        const base64String = reader.result.split(',')[1];
+        fetch(apiUrlPrefix + 'posts/upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({
+            fileData: base64String,
+            contentType: imageFile.type,
+          })
         })
-        .catch(error => {
-          console.error('Error:', error);
-        });
+          .then(response => response.json())
+          .then(data => {
+            handleAddPost(data.fileName);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      }
     } else {
       handleAddPost("");
     }

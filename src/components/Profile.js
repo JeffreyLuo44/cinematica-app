@@ -245,23 +245,32 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
       alert("The file size should be within 1 MB!");
       return;
     }
-    const formData = new FormData();
-    formData.append('UserId', userId); 
-    formData.append('File', selectedImageFile); 
-    await fetch(apiUrlPrefix + 'users/set-cover-picture', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${idToken}`,
-      },
-      body: formData,
-    })
-      .then(response => response.json())
-      .then(data => {
-        getAllProfileInfo();
+    const reader = new FileReader();
+    reader.readAsDataURL(selectedImageFile);
+    reader.onload = function () {
+      const base64String = reader.result.split(',')[1];
+      fetch(apiUrlPrefix + 'users/set-cover-picture', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          userId: userId,
+          image: {
+            fileData: base64String,
+            contentType: selectedImageFile.type,
+          }
+        })
       })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          getAllProfileInfo();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      }
   };
 
   // Simulate a click to find an image
@@ -281,24 +290,33 @@ const Profile = ({setPage, idToken, userId, viewProfileUserId, setViewProfileUse
       alert("The file size should be within 1 MB!");
       return;
     }
-    const formData = new FormData();
-    formData.append('UserId', userId); 
-    formData.append('File', selectedImageFile); 
-    await fetch(apiUrlPrefix + 'users/set-profile-picture', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${idToken}`,
-      },
-      body: formData,
-    })
-      .then(response => response.json())
-      .then(data => {
-        getAllProfileInfo();
-        getUserDetails();
+    const reader = new FileReader();
+    reader.readAsDataURL(selectedImageFile);
+    reader.onload = function () {
+      const base64String = reader.result.split(',')[1];
+      fetch(apiUrlPrefix + 'users/set-profile-picture', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          userId: userId,
+          image: {
+            fileData: base64String,
+            contentType: selectedImageFile.type,
+          }
+        })
       })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          getAllProfileInfo();
+          getUserDetails();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
   }
 
   const changeTab = (e, tab) => {

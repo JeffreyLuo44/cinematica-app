@@ -143,7 +143,8 @@ const MovieDetails = ({idToken, userId, movieId, handleToggleMovieDetails}) => {
         <button className="back" onClick={() => handleToggleMovieDetails(false)}><i class='fa fa-arrow-left'></i>&emsp;Back</button>
 
         {movieDetails.length === 0 ? <div className="movie-details-unloaded">
-            <p>Loading...</p>
+            <p>Loading movie details...</p>
+            <div id="loadingTimelineIndicator" class="loading__centre"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>
             </div>
             :
             <div className="movie-details">
