@@ -401,7 +401,7 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
                       <div className="post__author-container">
                       <div className="cinematica__profile-circle" onClick={() => handleViewProfile(post.post.userId)}><img src={post.profilePicture} alt={''} className="post-image" /></div>
                       <div>
-                          <p className="post-author" onClick={() => handleViewProfile(post.post.userId)}>{post.userName !== undefined ? post.userName : profileUsername}</p>
+                          <p className="post-author" onClick={() => handleViewProfile(post.post.userId)}>{post.post.user.userName !== undefined ? post.post.user.userName : profileUsername}</p>
                       </div>
                       </div>
                       <div>
@@ -431,7 +431,7 @@ const Posts = ({idToken, userId, posts, setPosts, postPage, setPostPage, replies
                   <div className="post__author-container">
                   <div className="cinematica__profile-circle" onClick={() => handleViewProfile(selectedPost.post.userId)}><img src={selectedPost.profilePicture} alt={''} className="post-image" /></div>
                   <div>
-                      <p className="post-author" onClick={() => handleViewProfile(selectedPost.post.userId)}>{selectedPost.userName !== undefined ? selectedPost.userName : profileUsername}</p>
+                      <p className="post-author" onClick={() => handleViewProfile(selectedPost.post.userId)}>{selectedPost.post.user.userName !== undefined ? selectedPost.post.user.userName : profileUsername}</p>
                   </div>
                   </div>
                   <div>
