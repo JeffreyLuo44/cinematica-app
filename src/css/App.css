@@ -740,3 +740,7 @@ textarea.post__text {
     font-size: 15px;
   }
 }
+
+.application {
+  transform: translate3d(0, 0, 0);
+}
